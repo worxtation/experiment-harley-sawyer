@@ -268,37 +268,15 @@ const Audio = (() => {
 
   function onStateChange(newState) {
     if (!isReady()) return;
-
     switch (newState) {
-      case 'idle':
-      case 'narrowed':
-      case 'closed':
+      case 'idle': case 'narrowed': case 'closed':
+      case 'watching': case 'squinting': case 'crimson': case 'patrol':
         playClick();
         break;
-      case 'watching':
-        playClick();
-        break;
-      case 'squinting':
-        playClick();
-        break;
-      case 'crimson':
-        playClick();
-        break;
-      case 'aggressive':
-        playAggressive();
-        break;
-      case 'many':
-        playGlitch();
-        break;
-      case 'bared':
-        playBared();
-        break;
-      case 'shutdown':
-        playShutdown();
-        break;
-      case 'patrol':
-        playClick();
-        break;
+      case 'aggressive': playAggressive(); break;
+      case 'many':       playGlitch();     break;
+      case 'bared':      playBared();      break;
+      case 'shutdown':   playShutdown();   break;
     }
   }
 
