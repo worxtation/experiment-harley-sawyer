@@ -328,7 +328,7 @@ const Voice = (() => {
     Dialogue.typeText(line.text, line.state);
 
     // Reproduz o áudio
-    const audio = new Audio(line.url);
+    const audio = new window.Audio(line.url);
     _audio = audio;
 
     audio.addEventListener('ended', () => {
