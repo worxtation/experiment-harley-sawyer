@@ -119,8 +119,8 @@
    ============================================= */
 
 @keyframes red-pulse {
-  0%, 100% { box-shadow: inset 0 0 80px rgba(204, 0, 0, 0.0); }
-  50%       { box-shadow: inset 0 0 80px rgba(204, 0, 0, 0.32); }
+  0%, 100% { box-shadow: inset 0 0 120px rgba(220, 0, 0, 0.0); }
+  50%       { box-shadow: inset 0 0 160px rgba(220, 0, 0, 0.55); }
 }
 
 .state-squinting .crt-screen,
@@ -130,7 +130,7 @@
 
 .state-aggressive .crt-screen {
   --color-shift: 12deg;
-  --saturation-mult: 2.2;
+  --saturation-mult: 2.4;
   animation: red-pulse 0.45s ease-in-out infinite;
 }
 
@@ -217,8 +217,8 @@
    ============================================= */
 
 @keyframes ethereal-pulse {
-  0%, 100% { box-shadow: inset 0 0 100px rgba(0, 229, 255, 0.12); }
-  50%       { box-shadow: inset 0 0 100px rgba(0, 229, 255, 0.22); }
+  0%, 100% { box-shadow: inset 0 0 160px rgba(0, 200, 255, 0.20); }
+  50%       { box-shadow: inset 0 0 200px rgba(0, 200, 255, 0.48); }
 }
 
 .state-ethereal .crt-screen {

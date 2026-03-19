@@ -12,7 +12,7 @@ const Effects = (() => {
   let glitchActive = false;
   let glitchTimer = null;
   let animFrame;
-  let currentNoiseIntensity = 0.30;
+  let currentNoiseIntensity = 0.48;
 
   function initNoise(canvasEl) {
     if (!canvasEl) return;
@@ -49,7 +49,7 @@ const Effects = (() => {
 
   // Gera um frame de grain com paleta purple-blue do fósforo CRT
   // Usa Uint32Array — 4x mais rápido que escrever RGBA individualmente
-  // Paleta segue prompt-aprimoraments.md: R baixo, G mínimo, B dominante
+  // Paleta: R baixo, G mínimo, B dominante — com spike violeta ocasional
   function renderNoise(intensity = 0.35) {
     if (!noiseCtx) return;
     const w = noiseCanvas.width;
@@ -61,11 +61,13 @@ const Effects = (() => {
 
     for (let i = 0; i < len; i++) {
       const v = (Math.random() * 255 * intensity) | 0;
-      const a = (Math.random() * 160)             | 0;
+      // Alpha maior — grain mais presente, mais visível
+      const a = (60 + Math.random() * 180) | 0;
       // Purple-blue: R leve, G mínimo, B dominante
-      // Aproxima paleta: (5-15, 0-10, 20-40) do fósforo real
-      const r = (v * 0.28) | 0;
-      const g = (v * 0.12) | 0;
+      // 5% de chance de spike violeta — contaminação de fósforo
+      const isSpike = Math.random() < 0.05;
+      const r = isSpike ? ((v * 0.55) | 0) : ((v * 0.22) | 0);
+      const g = (v * 0.10) | 0;
       // little-endian: uint32 → bytes [R, G, B, A]
       buf[i] = (a << 24) | (v << 16) | (g << 8) | r;
     }
