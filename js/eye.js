@@ -12,6 +12,7 @@ const Eye = (() => {
   let eyeShape, eyeClip;
   let ringsGroup, marksGroup;
   let manyGroup, aggressiveCorona, baredTeeth, patrolClaws;
+  let manyEyesPupils = [];
 
   let currentState = 'idle';
 
@@ -35,21 +36,57 @@ const Eye = (() => {
   const CX    = SVG_W / 2; // 200
   const CY    = SVG_H / 2; // 150
 
-  // Parâmetros do olho por estado
+  /*
+   * STATE_PARAMS — geometria e aparência do olho por estado
+   *
+   * Campos:
+   *   topY        — Y do ponto de controle da pálpebra superior (Bézier quadrática).
+   *                 Menor valor → mais aberta no topo; valor > CY (150) → fechada pelo topo.
+   *   botY        — Y do ponto de controle da pálpebra inferior.
+   *                 Maior valor → mais aberta na base; valor < CY → fechada pela base.
+   *   irisR       — Raio da íris (SVG units; viewBox 400×300, centro 200×150).
+   *   pupilR      — Raio da pupila.
+   *   irisColor   — Cor base da íris; determina o gradiente radial aplicado:
+   *                   '#8B0000' / '#CC0000' → iris-grad-crimson (vermelho)
+   *                   '#F5C518'             → iris-grad-patrol  (amarelo)
+   *                   outros                → iris-grad-neutral (azul-escuro)
+   *   glowColor   — Cor do drop-shadow phosphor no SVG inteiro.
+   *   rings       — true → mostra anéis concêntricos ao redor do olho.
+   *   marks       — true → mostra marcas lineares vermelhas na pálpebra (irritação).
+   *   dualPupil   — true → mostra pupila-satélite secundária (PATROL).
+   *   showCorona  — true → mostra corona explosiva substituindo o olho (AGGRESSIVE).
+   *   showTeeth   — true → mostra círculos-dentes magenta nas pálpebras (BARED).
+   *
+   * Sentimento / contexto emocional por estado:
+   *   idle      — Presença calma. Observa sem intenção visível — o padrão.
+   *   watching  — Foco absoluto. Pupila contraída, olho máximo aberto — ele te viu.
+   *   amused    — Ironia pesada. Pálpebra caída — condescendência; ele ri de você.
+   *   squinting — Irritação inicial. Marcas vermelhas surgem — primeiro aviso.
+   *   crimson   — Raiva fria, calculada. Íris vermelha, semi-fechado — controle total.
+   *   aggressive— Explosão. Corona substitui o olho — a máscara caiu.
+   *   patrol    — Vigilância. Íris amarela, pupila dupla — procurando algo.
+   *   narrowed  — Indiferença calculada. Fenda mínima — quase adormecido, nunca ausente.
+   *   many      — Fragmentação. Olhos múltiplos emergem — colapso de identidade.
+   *   closed    — Transição pura. Estado intermediário entre estados.
+   *   ethereal  — Presença transcendente. Pupila dilatada ao máximo ao retornar.
+   *   returns   — Consciência reiniciando. Pálpebra sobe de baixo — acordando.
+   *   bared     — Segredo revelado. Dentes magenta nas pálpebras — o que não devia existir.
+   *   shutdown  — Ausência. Olho completamente fechado — página perdeu foco.
+   */
   const STATE_PARAMS = {
     idle:       { topY: 80,   botY: 220, irisR: 60, pupilR: 28, irisColor: '#1A1A3E', glowColor: '#00E5FF', rings: false, marks: false, dualPupil: false, showCorona: false, showTeeth: false },
-    watching:   { topY: 28,   botY: 272, irisR: 54, pupilR: 19, irisColor: '#1A1A3E', glowColor: '#00E5FF', rings: true,  marks: false, dualPupil: false, showCorona: false, showTeeth: false },
+    watching:   { topY: 35,   botY: 272, irisR: 54, pupilR: 19, irisColor: '#1A1A3E', glowColor: '#00E5FF', rings: true,  marks: false, dualPupil: false, showCorona: false, showTeeth: false },
     amused:     { topY: 178,  botY: 236, irisR: 60, pupilR: 25, irisColor: '#1A1A3E', glowColor: '#00AACC', rings: false, marks: false, dualPupil: false, showCorona: false, showTeeth: false },
     squinting:  { topY: 118,  botY: 196, irisR: 60, pupilR: 22, irisColor: '#1A1A3E', glowColor: '#CC0044', rings: false, marks: true,  dualPupil: false, showCorona: false, showTeeth: false },
     crimson:    { topY: 158,  botY: 242, irisR: 67, pupilR: 19, irisColor: '#8B0000', glowColor: '#8B0000', rings: false, marks: false, dualPupil: false, showCorona: false, showTeeth: false },
     aggressive: { topY: -30,  botY: 330, irisR: 92, pupilR:  8, irisColor: '#CC0000', glowColor: '#CC0000', rings: false, marks: false, dualPupil: false, showCorona: true,  showTeeth: false },
     patrol:     { topY: 68,   botY: 232, irisR: 64, pupilR: 14, irisColor: '#F5C518', glowColor: '#F5C518', rings: false, marks: false, dualPupil: true,  showCorona: false, showTeeth: false },
     narrowed:   { topY: 134,  botY: 174, irisR: 53, pupilR: 17, irisColor: '#1A1A3E', glowColor: '#00E5FF', rings: false, marks: false, dualPupil: false, showCorona: false, showTeeth: false },
-    many:       { topY: 68,   botY: 232, irisR: 62, pupilR: 24, irisColor: '#6600BB', glowColor: '#6600BB', rings: true,  marks: false, dualPupil: false, showCorona: false, showTeeth: false },
-    closed:     { topY: 148,  botY: 152, irisR: 60, pupilR: 24, irisColor: '#1A1A3E', glowColor: '#00E5FF', rings: false, marks: false, dualPupil: false, showCorona: false, showTeeth: false },
-    ethereal:   { topY: 38,   botY: 262, irisR: 60, pupilR: 40, irisColor: '#0A0A22', glowColor: '#00E5FF', rings: false, marks: false, dualPupil: false, showCorona: false, showTeeth: false },
+    many:       { topY: 30,   botY: 272, irisR: 62, pupilR: 24, irisColor: '#6600BB', glowColor: '#6600BB', rings: true,  marks: false, dualPupil: false, showCorona: false, showTeeth: false },
+    closed:     { topY: 150,  botY: 152, irisR: 60, pupilR: 24, irisColor: '#1A1A3E', glowColor: '#00E5FF', rings: false, marks: false, dualPupil: false, showCorona: false, showTeeth: false },
+    ethereal:   { topY: 40,   botY: 262, irisR: 60, pupilR: 40, irisColor: '#0A0A22', glowColor: '#00E5FF', rings: false, marks: false, dualPupil: false, showCorona: false, showTeeth: false },
     returns:    { topY: 300,  botY: 220, irisR: 60, pupilR: 30, irisColor: '#0D1A0D', glowColor: '#00C864', rings: false, marks: false, dualPupil: false, showCorona: false, showTeeth: false },
-    bared:      { topY: 92,   botY: 220, irisR: 60, pupilR: 46, irisColor: '#1A0005', glowColor: '#CC0044', rings: false, marks: false, dualPupil: false, showCorona: false, showTeeth: true  },
+    bared:      { topY: 40,   botY: 220, irisR: 60, pupilR: 46, irisColor: '#1A0005', glowColor: '#CC0044', rings: false, marks: false, dualPupil: false, showCorona: false, showTeeth: true  },
     shutdown:   { topY: 300,  botY:   0, irisR: 60, pupilR: 24, irisColor: '#050518', glowColor: '#000000', rings: false, marks: false, dualPupil: false, showCorona: false, showTeeth: false },
   };
 
@@ -65,6 +102,23 @@ const Eye = (() => {
 
   function lerp(a, b, t) {
     return a + (b - a) * t;
+  }
+
+  // Exibe/oculta elemento SVG com fade opcional
+  function showElement(el, visible, fadeDelay = 0) {
+    if (!el) return;
+    if (visible) {
+      el.style.display = 'block';
+      el.style.opacity = '0';
+      if (fadeDelay > 0) {
+        setTimeout(() => { el.style.opacity = '1'; }, fadeDelay);
+      } else {
+        el.style.opacity = '1';
+      }
+    } else {
+      el.style.display = 'none';
+      el.style.opacity = '0';
+    }
   }
 
   function init(svgEl) {
@@ -92,8 +146,32 @@ const Eye = (() => {
 
     document.addEventListener('mousemove', onMouseMove);
 
+    initManyEyes();
     scheduleBlink();
     requestAnimationFrame(updatePupil);
+  }
+
+  // Posição e ângulo de cada mini-olho no SVG — espelha os transforms do HTML
+  const MANY_EYES_META = [
+    { cx: 75,  cy: 58,  angle: -20 },
+    { cx: 325, cy: 58,  angle:  15 },
+    { cx: 48,  cy: 150, angle:   5 },
+    { cx: 352, cy: 150, angle:  -5 },
+    { cx: 90,  cy: 242, angle:  25 },
+    { cx: 310, cy: 242, angle: -25 },
+    { cx: 200, cy: 22,  angle:   0 },
+  ];
+
+  function initManyEyes() {
+    if (!manyGroup) return;
+    const groups = manyGroup.querySelectorAll(':scope > g');
+    MANY_EYES_META.forEach((meta, i) => {
+      const g = groups[i];
+      if (!g) return;
+      const circles = g.querySelectorAll('circle');
+      // circles[0]=iris  circles[1]=pupil  circles[2]=highlight
+      manyEyesPupils.push({ meta, pupil: circles[1], highlight: circles[2] });
+    });
   }
 
   function onMouseMove(e) {
@@ -154,6 +232,37 @@ const Eye = (() => {
     // Move o grupo íris+pupila inteiro — íris e pupila se movem como uma unidade
     if (irisPupilGroup) {
       irisPupilGroup.setAttribute('transform', `translate(${ox.toFixed(2)}, ${oy.toFixed(2)})`);
+    }
+
+    // Mini-olhos do estado MANY seguem o mouse independentemente
+    if (currentState === 'many' && manyEyesPupils.length > 0) {
+      const mouseX = pupilPos.x * SVG_W;
+      const mouseY = pupilPos.y * SVG_H;
+      const maxOff = 8;
+      const factor = 0.06;
+
+      manyEyesPupils.forEach(({ meta, pupil, highlight }) => {
+        if (!pupil) return;
+
+        // Vetor mouse → centro do mini-olho em coordenadas SVG
+        const worldDx = mouseX - meta.cx;
+        const worldDy = mouseY - meta.cy;
+
+        // Rotaciona para o espaço local do grupo (desfaz o rotate do transform)
+        const rad = -meta.angle * Math.PI / 180;
+        const localX = worldDx * Math.cos(rad) - worldDy * Math.sin(rad);
+        const localY = worldDx * Math.sin(rad) + worldDy * Math.cos(rad);
+
+        const pox = Math.max(-maxOff, Math.min(maxOff, localX * factor));
+        const poy = Math.max(-maxOff, Math.min(maxOff, localY * factor));
+
+        pupil.setAttribute('cx', pox.toFixed(2));
+        pupil.setAttribute('cy', poy.toFixed(2));
+        if (highlight) {
+          highlight.setAttribute('cx', (-7 + pox * 0.5).toFixed(2));
+          highlight.setAttribute('cy', (-7 + poy * 0.5).toFixed(2));
+        }
+      });
     }
 
     requestAnimationFrame(updatePupil);
@@ -220,33 +329,9 @@ const Eye = (() => {
       manyGroup.style.display = stateName === 'many' ? 'block' : 'none';
     }
 
-    // AGGRESSIVE — corona explosiva
-    if (aggressiveCorona) {
-      if (p.showCorona) {
-        aggressiveCorona.style.display = 'block';
-        // Pequena animação de aparição
-        aggressiveCorona.style.opacity = '0';
-        setTimeout(() => {
-          if (aggressiveCorona) aggressiveCorona.style.opacity = '1';
-        }, 30);
-      } else {
-        aggressiveCorona.style.display = 'none';
-      }
-    }
-
-    // BARED — dentes
-    if (baredTeeth) {
-      if (p.showTeeth) {
-        baredTeeth.style.display = 'block';
-        baredTeeth.style.opacity = '0';
-        setTimeout(() => {
-          if (baredTeeth) baredTeeth.style.opacity = '1';
-        }, 80);
-      } else {
-        baredTeeth.style.display = 'none';
-        baredTeeth.style.opacity = '0';
-      }
-    }
+    // AGGRESSIVE — corona explosiva; BARED — dentes
+    showElement(aggressiveCorona, p.showCorona, 30);
+    showElement(baredTeeth, p.showTeeth, 80);
 
     // PATROL — garras
     if (patrolClaws) {
