@@ -3,12 +3,18 @@
 # Domínio: harley.worxtation.com
 # TLS: terminado no Cloudflare Tunnel — Traefik recebe HTTP simples
 #
+# Profiles:
+#   prod (padrão / Dokploy): docker compose up
+#   dev  (hot reload local):  docker compose --profile dev up
+#
 # Como usar no Dokploy:
 #   1. Crie um projeto tipo "Docker Compose"
 #   2. Defina APP_DOMAIN=harley.worxtation.com nas variáveis de ambiente
 #   3. O Dokploy detecta a rede dokploy-network automaticamente
 
 services:
+
+  # ─── PRODUÇÃO — nginx + Traefik ──────────────────────────────────────────
   harley:
     image: nginx:alpine
     container_name: harley
@@ -16,15 +22,37 @@ services:
     volumes:
       - ./:/usr/share/nginx/html:ro
       - ./nginx.conf:/etc/nginx/conf.d/default.conf:ro
-
     networks:
       - dokploy-network
-
     labels:
       - "traefik.enable=true"
       - "traefik.http.routers.harley.rule=Host(`${APP_DOMAIN:-harley.worxtation.com}`)"
       - "traefik.http.routers.harley.entrypoints=web"
       - "traefik.http.services.harley.loadbalancer.server.port=8765"
+
+  # ─── DESENVOLVIMENTO — browser-sync com hot reload ───────────────────────
+  # Acesso: http://localhost:8765
+  # Uso:    docker compose --profile dev up
+  harley-dev:
+    profiles: [dev]
+    image: node:20-alpine
+    container_name: harley-dev
+    working_dir: /app
+    command: >
+      npx --yes browser-sync start
+      --server /app
+      --files "/app/index.html"
+      --files "/app/css/**/*"
+      --files "/app/js/**/*"
+      --files "/app/assets/**/*"
+      --port 8765
+      --host 0.0.0.0
+      --no-notify
+      --no-open
+    volumes:
+      - ./:/app
+    ports:
+      - "8765:8765"
 
 networks:
   dokploy-network:
