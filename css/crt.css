@@ -390,22 +390,9 @@ main.crt-scanlines::after {
   transition: opacity 0.5s ease;
 }
 
-/* Drop-shadow CSS amplifica o glow da sclera — luz vazando pelo vidro
-   Assimétrico: horizontal mais longo que vertical (física do fósforo) */
-#eye-svg {
-  filter:
-    drop-shadow(0 0 18px rgba(160, 200, 255, 0.30))
-    drop-shadow(0 0 45px rgba(80,  120, 220, 0.18))
-    drop-shadow(0 0 90px rgba(40,   60, 160, 0.10));
-}
-
 /* Nos estados intensos o olho fica ligeiramente maior (percepção) */
 .eye-glow-active #eye-svg {
   opacity: 1;
-  filter:
-    drop-shadow(0 0 22px rgba(0, 220, 255, 0.50))
-    drop-shadow(0 0 55px rgba(0, 160, 240, 0.28))
-    drop-shadow(0 0 110px rgba(0, 80, 200, 0.15));
 }
 
 /* =============================================
