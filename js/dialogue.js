@@ -187,11 +187,20 @@ const Dialogue = (() => {
   // Digitação base — delay por caractere variável
   // =============================================
 
+  // Gerencia foco da janela terminal — ativa quando digitando, standby quando silencia
+  function setTerminalFocus(active, badge = 'REC') {
+    const win = document.getElementById('terminal-window');
+    const bdg = document.getElementById('terminal-window-badge');
+    if (win) win.classList.toggle('window-active', active);
+    if (bdg) bdg.textContent = active ? badge : 'STANDBY';
+  }
+
   function typeText(text, state, onDone) {
     // Fallback: se init não foi chamado ou falhou, tenta encontrar o elemento
     if (!outputEl) outputEl = document.getElementById('terminal-text');
     if (!outputEl) return;
     isTyping = true;
+    setTerminalFocus(true, 'REC');
     outputEl.textContent = '';
 
     const charDelay = getCharDelay(state || currentState);
@@ -200,6 +209,7 @@ const Dialogue = (() => {
     const type = () => {
       if (i >= text.length) {
         isTyping = false;
+        setTerminalFocus(true, 'TX');   // texto visível na tela — janela ainda ativa
         if (onDone) onDone();
         return;
       }
@@ -252,6 +262,7 @@ const Dialogue = (() => {
         outputEl.style.opacity = '0.9';
         outputEl.style.transition = '';
       }
+      setTerminalFocus(false);   // terminal silenciou — janela perde foco
     }, 600);
   }
 

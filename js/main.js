@@ -9,13 +9,43 @@ document.addEventListener('DOMContentLoaded', () => {
   // =============================================
   // Elementos da DOM
   // =============================================
-  const eyeSvg        = document.getElementById('eye-svg');
-  const noiseCanvas   = document.getElementById('noise-canvas');
-  const glitchCanvas  = document.getElementById('glitch-canvas');
-  const terminalOut   = document.getElementById('terminal-text');
+  const eyeSvg         = document.getElementById('eye-svg');
+  const noiseCanvas    = document.getElementById('noise-canvas');
+  const glitchCanvas   = document.getElementById('glitch-canvas');
+  const terminalOut    = document.getElementById('terminal-text');
   const terminalCursor = document.getElementById('terminal-cursor');
-  const crtScreen     = document.querySelector('.crt-screen');
-  const cursorEl      = document.getElementById('cursor');
+  const crtScreen      = document.querySelector('.crt-screen');
+  const cursorEl       = document.getElementById('cursor');
+
+  // Janelas do CRT OS
+  const eyeWindow      = document.getElementById('eye-window');
+  const eyeBadge       = document.getElementById('eye-window-badge');
+  const terminalWindow = document.getElementById('terminal-window');
+  const terminalBadge  = document.getElementById('terminal-window-badge');
+
+  // Labels de estado para o badge da janela do olho
+  const EYE_STATE_LABELS = {
+    idle:      'IDLE',
+    watching:  'ACTIVE',
+    amused:    'ACTIVE',
+    squinting: 'WARN',
+    crimson:   'ALERT',
+    aggressive:'ALERT',
+    patrol:    'SCAN',
+    narrowed:  'SCAN',
+    many:      'ERR',
+    ethereal:  'DEEP',
+    bared:     'ERR',
+    returns:   'BOOT',
+    shutdown:  'OFF',
+    closed:    'SYS',
+  };
+
+  // Estados em que a janela do olho é considerada "ativa" (em ação)
+  const EYE_ACTIVE_STATES = new Set([
+    'watching', 'amused', 'squinting', 'crimson', 'aggressive',
+    'patrol', 'narrowed', 'many', 'ethereal', 'bared',
+  ]);
 
   // =============================================
   // Cursor customizado — crosshair segue o mouse
@@ -112,6 +142,11 @@ document.addEventListener('DOMContentLoaded', () => {
     crtScreen?.classList.toggle('eye-glow-active',
       ['watching', 'ethereal', 'aggressive', 'patrol', 'returns'].includes(newState)
     );
+
+    // ── Foco das janelas ──────────────────────────────────────────
+    // Eye window: ativa nos estados de ação intencional do olho
+    eyeWindow?.classList.toggle('window-active', EYE_ACTIVE_STATES.has(newState));
+    if (eyeBadge) eyeBadge.textContent = EYE_STATE_LABELS[newState] ?? newState.toUpperCase();
 
     // Noise intensity por estado
     const noiseIntensity =
