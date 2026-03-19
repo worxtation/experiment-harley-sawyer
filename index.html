@@ -7,6 +7,7 @@
   <link rel="stylesheet" href="css/crt.css">
   <link rel="stylesheet" href="css/glitch.css">
   <link rel="stylesheet" href="css/states.css">
+  <link rel="stylesheet" href="css/windows.css">
 </head>
 <body class="state-returns" data-state="returns">
 
@@ -55,8 +56,19 @@
       <!-- Glow fósforo ambiente — por trás do olho, muda por estado -->
       <div class="phosphor-glow"></div>
 
-      <!-- Container do olho -->
-      <div class="eye-container">
+      <!-- Janela do olho — componente exibido na tela CRT -->
+      <div class="eye-container crt-window" id="eye-window">
+
+        <!-- Chrome da janela: titlebar posicionado absolutamente no topo -->
+        <div class="crt-window-titlebar">
+          <div class="crt-win-controls">
+            <span class="crt-win-dot"></span>
+            <span class="crt-win-dot"></span>
+            <span class="crt-win-dot"></span>
+          </div>
+          <span class="crt-window-title">OCULAR.FEED</span>
+          <span class="crt-window-badge" id="eye-window-badge">IDLE</span>
+        </div>
 
         <svg id="eye-svg"
              viewBox="0 0 400 300"
@@ -389,8 +401,16 @@
     </div>
     <!-- /crt-screen -->
 
-    <!-- Terminal fora do crt-screen — não sofre hue-rotate/brightness dos estados -->
-    <div class="terminal-output">
+    <!-- Janela de terminal — fora do crt-screen (não sofre filtros de estado) -->
+    <div class="terminal-output crt-window" id="terminal-window">
+      <!-- Chrome da janela: titlebar -->
+      <div class="crt-window-titlebar">
+        <div class="crt-win-controls">
+          <span class="crt-win-dot"></span>
+        </div>
+        <span class="crt-window-title">COMM.LINK</span>
+        <span class="crt-window-badge" id="terminal-window-badge">STANDBY</span>
+      </div>
       <div class="terminal-inner">
         <span id="terminal-text"></span><span class="terminal-cursor" id="terminal-cursor"></span>
       </div>
