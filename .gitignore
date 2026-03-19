@@ -1,2 +1,25 @@
+# Sistema
 .DS_Store
+Thumbs.db
+
+# Logs
 *.log
+npm-debug.log*
+
+# Dependências
+node_modules/
+
+# Builds
+dist/
+build/
+
+# Ambiente
+.env
+.env.local
+.env.*.local
+
+# Temporários
+*.tmp
+*.bak
+*.swp
+*~
