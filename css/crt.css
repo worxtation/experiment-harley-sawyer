@@ -352,15 +352,15 @@ main.crt-scanlines::after {
 
 /* =============================================
    CONTAINER DO OLHO SVG
+   Corpo da janela eye-window — centering interno do SVG
    ============================================= */
 
 .eye-container {
-  position: absolute;
-  inset: 0;
+  flex: 1;
   display: flex;
   align-items: center;
   justify-content: center;
-  z-index: 10;
+  overflow: hidden;
 }
 
 #eye-svg {
@@ -397,17 +397,11 @@ main.crt-scanlines::after {
 
 /* =============================================
    TERMINAL DE DIÁLOGO
+   Posicionamento flutuante definido em windows.css (#terminal-window)
    ============================================= */
 
 .terminal-output {
-  position: absolute;
-  bottom: 28px;
-  left: 50%;
-  transform: translateX(-50%);
-  width: 72%;
   text-align: center;
-  /* z-index > 51 (scan beam) — terminal sempre verde, fora do filter de estado */
-  z-index: 60;
   pointer-events: none;
   min-height: 2em;
 }
