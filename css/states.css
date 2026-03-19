@@ -1,0 +1,285 @@
+/* =============================================
+   STATES.CSS — Classes de estado para o body
+   ============================================= */
+
+:root {
+  --eyelid-top-y: 80px;
+  --eyelid-bottom-y: 220px;
+  --iris-scale: 1;
+  --iris-color: #1A1A3E;
+  --pupil-scale: 1;
+  --sclera-opacity: 1;
+  --eye-scale: 1;
+  --glow-intensity: 0.4;
+  --glow-color: 0,229,255;
+  --eyelid-color: #050518;
+  --eyelid-marks-opacity: 0;
+  --rings-opacity: 0;
+  --rings-color: rgba(0,229,255,0.15);
+  --blink-duration: 150ms;
+}
+
+/* =============================================
+   IDLE — estado base
+   ============================================= */
+
+.state-idle {
+  --eyelid-top-y: 80px;
+  --eyelid-bottom-y: 220px;
+  --iris-scale: 1;
+  --iris-color: #1A1A3E;
+  --pupil-scale: 1;
+  --glow-intensity: 0.3;
+  --glow-color: 0,229,255;
+}
+
+/* =============================================
+   WATCHING — olho expandido, quase circular
+   ============================================= */
+
+.state-watching {
+  --eyelid-top-y: 28px;
+  --eyelid-bottom-y: 272px;
+  --iris-scale: 0.82;
+  --pupil-scale: 0.68;
+  --glow-intensity: 0.75;
+  --rings-opacity: 0.7;
+  --rings-color: rgba(0,229,255,0.22);
+}
+
+/* =============================================
+   AMUSED — pálpebra pesada ~65%
+   ============================================= */
+
+.state-amused {
+  --eyelid-top-y: 178px;
+  --eyelid-bottom-y: 236px;
+  --iris-scale: 1;
+  --pupil-scale: 0.88;
+  --glow-intensity: 0.14;
+  --sclera-opacity: 0.65;
+}
+
+/* =============================================
+   SQUINTING — olho apertado, marcas vermelhas
+   ============================================= */
+
+.state-squinting {
+  --eyelid-top-y: 118px;
+  --eyelid-bottom-y: 196px;
+  --iris-scale: 1;
+  --pupil-scale: 0.78;
+  --glow-intensity: 0.55;
+  --glow-color: 204,0,68;
+  --eyelid-marks-opacity: 1;
+  --eyelid-color: #070718;
+}
+
+/* =============================================
+   CRIMSON — iris vermelha, semi-fechado
+   ============================================= */
+
+.state-crimson {
+  --eyelid-top-y: 158px;
+  --eyelid-bottom-y: 242px;
+  --iris-color: #8B0000;
+  --iris-scale: 1.12;
+  --pupil-scale: 0.68;
+  --glow-intensity: 0.65;
+  --glow-color: 139,0,0;
+}
+
+/* =============================================
+   AGGRESSIVE — abstrato, anel vermelho explosivo
+   O corona SVG é mostrado — o olho normal fica oculto
+   ============================================= */
+
+.state-aggressive {
+  --eye-scale: 1;
+  --iris-color: #CC0000;
+  --iris-scale: 1.5;
+  --pupil-scale: 0.25;
+  --glow-intensity: 1.0;
+  --glow-color: 204,0,0;
+  --eyelid-top-y: -30px;
+  --eyelid-bottom-y: 330px;
+}
+
+/* Ambient glow nos estados intensos */
+.state-aggressive .crt-screen {
+  box-shadow: inset 0 0 140px rgba(204, 0, 0, 0.28);
+}
+
+/* =============================================
+   PATROL — iris amarela, vigilância
+   ============================================= */
+
+.state-patrol {
+  --iris-color: #F5C518;
+  --iris-scale: 1.06;
+  --pupil-scale: 0.48;
+  --glow-intensity: 0.65;
+  --glow-color: 245,197,24;
+}
+
+.state-patrol .crt-screen {
+  box-shadow: inset 0 0 120px rgba(245, 197, 24, 0.14);
+}
+
+/* =============================================
+   NARROWED — fenda mínima, gráfico/2D
+   ============================================= */
+
+.state-narrowed {
+  --eyelid-top-y: 134px;
+  --eyelid-bottom-y: 174px;
+  --iris-scale: 0.88;
+  --pupil-scale: 0.58;
+  --glow-intensity: 0.18;
+}
+
+/* =============================================
+   MANY — olhos múltiplos
+   ============================================= */
+
+.state-many {
+  --glow-intensity: 0.85;
+  --glow-color: 102,0,187;
+  --iris-color: #6600BB;
+}
+
+.state-many .crt-screen {
+  box-shadow: inset 0 0 140px rgba(102, 0, 187, 0.28);
+}
+
+/* =============================================
+   CLOSED — transição (apenas contorno)
+   ============================================= */
+
+.state-closed {
+  --eyelid-top-y: 148px;
+  --eyelid-bottom-y: 152px;
+  --sclera-opacity: 0;
+  --glow-intensity: 0.08;
+}
+
+/* =============================================
+   ETHEREAL — realista, alta definição
+   ============================================= */
+
+.state-ethereal {
+  --eyelid-top-y: 38px;
+  --eyelid-bottom-y: 262px;
+  --iris-scale: 1.0;
+  --pupil-scale: 1.35;
+  --glow-intensity: 0.95;
+  --glow-color: 0,229,255;
+  --iris-color: #0A0A22;
+}
+
+.state-ethereal .crt-screen {
+  box-shadow: inset 0 0 140px rgba(0, 229, 255, 0.22);
+}
+
+/* =============================================
+   RETURNS — semi-aberto de baixo para cima
+   ============================================= */
+
+.state-returns {
+  --eyelid-top-y: 300px;
+  --eyelid-bottom-y: 220px;
+  --glow-intensity: 0.52;
+  --glow-color: 0,200,100;
+}
+
+/* =============================================
+   BARED — dentes/círculos como pálpebras
+   ============================================= */
+
+.state-bared {
+  --eyelid-top-y: 92px;
+  --eyelid-bottom-y: 220px;
+  --iris-color: #1A0005;
+  --pupil-scale: 1.55;
+  --glow-intensity: 0.75;
+  --glow-color: 204,0,68;
+}
+
+/* =============================================
+   SHUTDOWN — página perde foco
+   ============================================= */
+
+.state-shutdown {
+  --eyelid-top-y: 300px;
+  --eyelid-bottom-y: 0px;
+  --sclera-opacity: 0;
+  --glow-intensity: 0;
+}
+
+/* =============================================
+   AGGRESSIVE corona — transição de aparição
+   ============================================= */
+
+#aggressive-corona {
+  transition: opacity 0.2s ease;
+}
+
+/* =============================================
+   BARED teeth — transição de aparição
+   ============================================= */
+
+#bared-teeth {
+  transition: opacity 0.3s ease;
+}
+
+/* =============================================
+   PATROL claws — transição
+   ============================================= */
+
+#patrol-claws {
+  transition: opacity 0.4s ease;
+}
+
+/* =============================================
+   Transições suaves dos elementos SVG
+   ============================================= */
+
+#eye-svg * {
+  transition:
+    fill 0.45s ease,
+    opacity 0.32s ease,
+    transform 0.32s ease;
+}
+
+/* Transições rápidas em estados de raiva */
+.state-aggressive #eye-svg *,
+.state-squinting #eye-svg *,
+.state-crimson #eye-svg * {
+  transition:
+    fill 0.15s ease,
+    opacity 0.15s ease,
+    transform 0.15s ease;
+}
+
+/* Sem transição durante CLOSED */
+.state-closed #eye-svg * {
+  transition: none;
+}
+
+/* =============================================
+   Pálpebras — marks (SQUINTING)
+   ============================================= */
+
+.eyelid-marks {
+  opacity: var(--eyelid-marks-opacity);
+  transition: opacity 0.2s ease;
+}
+
+/* =============================================
+   Rings concêntricos (WATCHING)
+   ============================================= */
+
+.eye-rings {
+  opacity: var(--rings-opacity);
+  transition: opacity 0.55s ease;
+}

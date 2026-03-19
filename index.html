@@ -1,0 +1,365 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Dr. Harley Sawyer — Experiment 1354</title>
+  <link rel="stylesheet" href="css/crt.css">
+  <link rel="stylesheet" href="css/glitch.css">
+  <link rel="stylesheet" href="css/states.css">
+</head>
+<body class="state-returns" data-state="returns">
+
+  <!-- Wrapper externo — scanlines + scan beam (padrão CodePen) -->
+  <main class="crt-scanlines">
+
+    <!-- Superfície phosphor — recebe filtros de estado, vignette, glow -->
+    <div class="crt-screen">
+
+      <!-- Noise canvas — grain azulado dinâmico -->
+      <canvas id="noise-canvas"></canvas>
+
+      <!-- Glitch canvas — horizontal tears -->
+      <canvas id="glitch-canvas"></canvas>
+
+      <!-- Layers de glitch CSS -->
+      <div class="glitch-layer-1"></div>
+      <div class="glitch-layer-2"></div>
+
+      <!-- Container do olho -->
+      <div class="eye-container">
+        <svg id="eye-svg"
+             viewBox="0 0 400 300"
+             xmlns="http://www.w3.org/2000/svg"
+             xmlns:xlink="http://www.w3.org/1999/xlink">
+          <defs>
+
+            <filter id="glow" x="-40%" y="-40%" width="180%" height="180%">
+              <feGaussianBlur stdDeviation="6" result="blur-wide"/>
+              <feGaussianBlur stdDeviation="2.5" result="blur-sharp"/>
+              <feMerge>
+                <feMergeNode in="blur-wide"/>
+                <feMergeNode in="blur-sharp"/>
+                <feMergeNode in="SourceGraphic"/>
+              </feMerge>
+            </filter>
+
+            <filter id="chroma" x="-15%" y="-15%" width="130%" height="130%">
+              <feColorMatrix type="matrix"
+                values="1 0 0 0 0  0 1 0 0 0  0 0 1 0 0  0 0 0 1 0"
+                result="source"/>
+              <feOffset in="source" dx="3" dy="1" result="red-shift"/>
+              <feColorMatrix in="red-shift" type="matrix"
+                values="1 0 0 0 0  0 0 0 0 0  0 0 0 0 0  0 0 0 1 0"
+                result="red-channel"/>
+              <feOffset in="source" dx="-3" dy="-1" result="cyan-shift"/>
+              <feColorMatrix in="cyan-shift" type="matrix"
+                values="0 0 0 0 0  0 1 0 0 0  0 0 1 0 0  0 0 0 1 0"
+                result="cyan-channel"/>
+              <feBlend in="red-channel" in2="cyan-channel" mode="screen" result="combined"/>
+              <feBlend in="combined" in2="source" mode="screen"/>
+            </filter>
+
+            <filter id="highlight-glow" x="-100%" y="-100%" width="300%" height="300%">
+              <feGaussianBlur stdDeviation="3.5" result="blur"/>
+              <feMerge>
+                <feMergeNode in="blur"/>
+                <feMergeNode in="SourceGraphic"/>
+              </feMerge>
+            </filter>
+
+            <filter id="corona-glow" x="-60%" y="-60%" width="220%" height="220%">
+              <feGaussianBlur stdDeviation="10" result="glow"/>
+              <feColorMatrix type="matrix"
+                values="1.5 0 0 0 0.15  0 0 0 0 0  0 0 0 0 0  0 0 0 1 0"
+                in="glow" result="red-glow"/>
+              <feMerge>
+                <feMergeNode in="red-glow"/>
+                <feMergeNode in="SourceGraphic"/>
+              </feMerge>
+            </filter>
+
+            <clipPath id="eye-clip">
+              <path id="eye-clip-path" d="M 30,150 Q 200,80 370,150 Q 200,220 30,150 Z"/>
+            </clipPath>
+
+            <radialGradient id="sclera-grad" cx="40%" cy="36%" r="68%">
+              <stop offset="0%"   stop-color="#F2F6FF"/>
+              <stop offset="30%"  stop-color="#DDE8F8"/>
+              <stop offset="65%"  stop-color="#C8D4E8"/>
+              <stop offset="100%" stop-color="#9AACC8"/>
+            </radialGradient>
+
+            <radialGradient id="iris-grad-neutral" cx="50%" cy="50%" r="50%">
+              <stop offset="0%"   stop-color="#252558"/>
+              <stop offset="50%"  stop-color="#101040"/>
+              <stop offset="100%" stop-color="#040418"/>
+            </radialGradient>
+
+            <radialGradient id="iris-grad-crimson" cx="50%" cy="50%" r="50%">
+              <stop offset="0%"   stop-color="#DD0000"/>
+              <stop offset="55%"  stop-color="#770000"/>
+              <stop offset="100%" stop-color="#200000"/>
+            </radialGradient>
+
+            <radialGradient id="iris-grad-patrol" cx="50%" cy="50%" r="50%">
+              <stop offset="0%"   stop-color="#FFE868"/>
+              <stop offset="50%"  stop-color="#F5C518"/>
+              <stop offset="100%" stop-color="#705000"/>
+            </radialGradient>
+
+            <radialGradient id="pupil-grad" cx="32%" cy="32%" r="62%">
+              <stop offset="0%"   stop-color="#1A1A2A"/>
+              <stop offset="60%"  stop-color="#050508"/>
+              <stop offset="100%" stop-color="#000000"/>
+            </radialGradient>
+
+            <radialGradient id="aggressive-ring-grad" cx="50%" cy="50%" r="50%">
+              <stop offset="0%"   stop-color="#000000"/>
+              <stop offset="60%"  stop-color="#000000"/>
+              <stop offset="72%"  stop-color="#660000"/>
+              <stop offset="82%"  stop-color="#CC0000"/>
+              <stop offset="90%"  stop-color="#FF2200"/>
+              <stop offset="100%" stop-color="#220000"/>
+            </radialGradient>
+
+          </defs>
+
+          <rect width="400" height="300" fill="#050518"/>
+
+          <g id="aggressive-corona" style="display:none">
+            <rect width="400" height="300" fill="#000000"/>
+            <circle cx="200" cy="150" r="84" fill="url(#aggressive-ring-grad)" filter="url(#corona-glow)"/>
+            <circle cx="200" cy="150" r="96"  fill="none" stroke="#CC0000" stroke-width="3.5" opacity="0.95" filter="url(#corona-glow)"/>
+            <circle cx="200" cy="150" r="108" fill="none" stroke="#AA0000" stroke-width="2.5" opacity="0.7"/>
+            <circle cx="200" cy="150" r="120" fill="none" stroke="#FF3333" stroke-width="1.5" opacity="0.45"/>
+            <circle cx="200" cy="150" r="132" fill="none" stroke="#FF5555" stroke-width="1"   opacity="0.28"/>
+            <circle cx="200" cy="150" r="144" fill="none" stroke="#FF7777" stroke-width="0.5" opacity="0.15"/>
+            <g stroke="#DD0000" stroke-linecap="round" filter="url(#corona-glow)">
+              <line x1="200" y1="58"  x2="200" y2="18"  stroke-width="4.5" opacity="0.95"/>
+              <line x1="256" y1="77"  x2="285" y2="43"  stroke-width="3.5" opacity="0.85"/>
+              <line x1="296" y1="117" x2="340" y2="105" stroke-width="3"   opacity="0.8"/>
+              <line x1="308" y1="150" x2="358" y2="150" stroke-width="4.5" opacity="0.95"/>
+              <line x1="296" y1="183" x2="340" y2="195" stroke-width="3"   opacity="0.8"/>
+              <line x1="256" y1="223" x2="285" y2="257" stroke-width="3.5" opacity="0.85"/>
+              <line x1="200" y1="242" x2="200" y2="282" stroke-width="4.5" opacity="0.95"/>
+              <line x1="144" y1="223" x2="115" y2="257" stroke-width="3.5" opacity="0.85"/>
+              <line x1="104" y1="183" x2="60"  y2="195" stroke-width="3"   opacity="0.8"/>
+              <line x1="92"  y1="150" x2="42"  y2="150" stroke-width="4.5" opacity="0.95"/>
+              <line x1="104" y1="117" x2="60"  y2="105" stroke-width="3"   opacity="0.8"/>
+              <line x1="144" y1="77"  x2="115" y2="43"  stroke-width="3.5" opacity="0.85"/>
+            </g>
+            <rect x="0" y="88"  width="400" height="2" fill="#FF0000" opacity="0.5"/>
+            <rect x="0" y="214" width="400" height="1" fill="#FF2200" opacity="0.4"/>
+            <rect x="0" y="52"  width="400" height="1" fill="#FF0000" opacity="0.25"/>
+          </g>
+
+          <g id="rings" style="opacity:0; transition: opacity 0.6s ease">
+            <ellipse cx="200" cy="150" rx="152" ry="110" fill="none" stroke="rgba(0,229,255,0.14)" stroke-width="1.5"/>
+            <ellipse cx="200" cy="150" rx="132" ry="95"  fill="none" stroke="rgba(0,229,255,0.11)" stroke-width="1.5"/>
+            <ellipse cx="200" cy="150" rx="112" ry="80"  fill="none" stroke="rgba(0,229,255,0.09)" stroke-width="1"/>
+            <ellipse cx="200" cy="150" rx="92"  ry="65"  fill="none" stroke="rgba(0,229,255,0.07)" stroke-width="1"/>
+          </g>
+
+          <g clip-path="url(#eye-clip)" filter="url(#chroma)">
+
+            <ellipse id="sclera" cx="200" cy="150" rx="160" ry="85"
+              fill="url(#sclera-grad)" filter="url(#glow)"/>
+
+            <g id="sclera-veins" stroke="#C0A8CC" stroke-linecap="round" fill="none" opacity="0.18">
+              <path d="M 72,148 C 95,150 115,152 145,155"/>
+              <path d="M 95,140 C 112,143 128,148 148,153"/>
+              <path d="M 328,148 C 305,150 285,152 255,155"/>
+              <path d="M 308,141 C 292,144 275,148 255,154"/>
+              <path d="M 85,158 C 108,156 125,160 142,162"/>
+              <path d="M 318,157 C 295,155 278,159 260,162"/>
+            </g>
+
+            <circle id="iris" cx="200" cy="150" r="60" fill="url(#iris-grad-neutral)"/>
+            <circle cx="200" cy="150" r="58" fill="none" stroke="rgba(255,255,255,0.07)" stroke-width="2.5"/>
+            <circle cx="200" cy="150" r="53" fill="none" stroke="rgba(255,255,255,0.05)" stroke-width="2"/>
+            <circle cx="200" cy="150" r="47" fill="none" stroke="rgba(0,0,0,0.45)" stroke-width="3"/>
+            <circle cx="200" cy="150" r="41" fill="none" stroke="rgba(255,255,255,0.03)" stroke-width="1.5"/>
+            <circle cx="200" cy="150" r="35" fill="none" stroke="rgba(0,0,0,0.55)" stroke-width="2.5"/>
+
+            <g opacity="0.07" stroke="rgba(200,220,255,0.8)" stroke-width="0.6">
+              <line x1="200" y1="150" x2="200" y2="91"/>
+              <line x1="200" y1="150" x2="251" y2="108"/>
+              <line x1="200" y1="150" x2="259" y2="150"/>
+              <line x1="200" y1="150" x2="251" y2="192"/>
+              <line x1="200" y1="150" x2="200" y2="209"/>
+              <line x1="200" y1="150" x2="149" y2="192"/>
+              <line x1="200" y1="150" x2="141" y2="150"/>
+              <line x1="200" y1="150" x2="149" y2="108"/>
+              <line x1="200" y1="150" x2="228" y2="97"/>
+              <line x1="200" y1="150" x2="257" y2="127"/>
+              <line x1="200" y1="150" x2="257" y2="173"/>
+              <line x1="200" y1="150" x2="228" y2="203"/>
+              <line x1="200" y1="150" x2="172" y2="203"/>
+              <line x1="200" y1="150" x2="143" y2="173"/>
+              <line x1="200" y1="150" x2="143" y2="127"/>
+              <line x1="200" y1="150" x2="172" y2="97"/>
+            </g>
+
+            <circle id="pupil" cx="200" cy="150" r="28" fill="url(#pupil-grad)"/>
+
+            <circle id="pupil-secondary" cx="216" cy="150" r="8"
+              fill="#000000" style="display:none; opacity:0"/>
+
+            <circle id="highlight-cyan" cx="192" cy="140" r="6.5"
+              fill="#00FFEE" opacity="0.96" filter="url(#highlight-glow)"/>
+            <circle id="highlight-red" cx="196" cy="144" r="4"
+              fill="#FF2222" opacity="0.78" filter="url(#highlight-glow)"/>
+            <circle cx="213" cy="162" r="2.5" fill="#00FFEE" opacity="0.42"/>
+
+          </g>
+
+          <path id="eyelid-top-fill"
+            d="M 0,0 L 400,0 L 400,150 Q 200,80 30,150 L 0,150 Z"
+            fill="#050518"/>
+          <path id="eyelid-bottom-fill"
+            d="M 0,300 L 400,300 L 400,150 Q 200,220 30,150 L 0,150 Z"
+            fill="#050518"/>
+
+          <path id="eyelid-top"
+            d="M 30,150 Q 200,80 370,150"
+            fill="none" stroke="rgba(210,225,248,0.72)"
+            stroke-width="1.5" stroke-linecap="round"/>
+          <path id="eyelid-bottom"
+            d="M 30,150 Q 200,220 370,150"
+            fill="none" stroke="rgba(210,225,248,0.45)"
+            stroke-width="1" stroke-linecap="round"/>
+
+          <g id="eyelid-marks" style="opacity:0; transition: opacity 0.2s ease">
+            <line x1="55"  y1="143" x2="33"  y2="113" stroke="#CC0044" stroke-width="2.5" stroke-linecap="round" opacity="0.88"/>
+            <line x1="93"  y1="129" x2="74"  y2="101" stroke="#CC0044" stroke-width="2.5" stroke-linecap="round" opacity="0.92"/>
+            <line x1="137" y1="119" x2="124" y2="90"  stroke="#CC0044" stroke-width="2"   stroke-linecap="round" opacity="0.78"/>
+            <line x1="200" y1="115" x2="200" y2="84"  stroke="#CC0044" stroke-width="2.5" stroke-linecap="round" opacity="0.92"/>
+            <line x1="263" y1="119" x2="276" y2="90"  stroke="#CC0044" stroke-width="2"   stroke-linecap="round" opacity="0.78"/>
+            <line x1="307" y1="129" x2="326" y2="101" stroke="#CC0044" stroke-width="2.5" stroke-linecap="round" opacity="0.92"/>
+            <line x1="345" y1="143" x2="367" y2="113" stroke="#CC0044" stroke-width="2.5" stroke-linecap="round" opacity="0.88"/>
+            <line x1="55"  y1="157" x2="33"  y2="187" stroke="#CC0044" stroke-width="1.5" stroke-linecap="round" opacity="0.62"/>
+            <line x1="200" y1="185" x2="200" y2="213" stroke="#CC0044" stroke-width="1.5" stroke-linecap="round" opacity="0.62"/>
+            <line x1="345" y1="157" x2="367" y2="187" stroke="#CC0044" stroke-width="1.5" stroke-linecap="round" opacity="0.62"/>
+          </g>
+
+          <g id="bared-teeth" style="display:none; opacity:0">
+            <circle cx="72"  cy="136" r="10"  fill="#CC0044" filter="url(#highlight-glow)"/>
+            <circle cx="103" cy="121" r="11"  fill="#CC0044" filter="url(#highlight-glow)"/>
+            <circle cx="138" cy="113" r="11"  fill="#CC0044" filter="url(#highlight-glow)"/>
+            <circle cx="170" cy="108" r="11"  fill="#CC0044" filter="url(#highlight-glow)"/>
+            <circle cx="200" cy="106" r="12"  fill="#CC0044" filter="url(#highlight-glow)"/>
+            <circle cx="230" cy="108" r="11"  fill="#CC0044" filter="url(#highlight-glow)"/>
+            <circle cx="262" cy="113" r="11"  fill="#CC0044" filter="url(#highlight-glow)"/>
+            <circle cx="297" cy="121" r="11"  fill="#CC0044" filter="url(#highlight-glow)"/>
+            <circle cx="328" cy="136" r="10"  fill="#CC0044" filter="url(#highlight-glow)"/>
+            <circle cx="72"  cy="164" r="10"  fill="#990033" opacity="0.78"/>
+            <circle cx="103" cy="179" r="11"  fill="#990033" opacity="0.78"/>
+            <circle cx="138" cy="187" r="11"  fill="#990033" opacity="0.78"/>
+            <circle cx="170" cy="192" r="11"  fill="#990033" opacity="0.78"/>
+            <circle cx="200" cy="194" r="12"  fill="#990033" opacity="0.78"/>
+            <circle cx="230" cy="192" r="11"  fill="#990033" opacity="0.78"/>
+            <circle cx="262" cy="187" r="11"  fill="#990033" opacity="0.78"/>
+            <circle cx="297" cy="179" r="11"  fill="#990033" opacity="0.78"/>
+            <circle cx="328" cy="164" r="10"  fill="#990033" opacity="0.78"/>
+            <line x1="0" y1="144" x2="400" y2="144" stroke="#00FFFF" stroke-width="1.5" opacity="0.72"/>
+            <line x1="0" y1="157" x2="400" y2="157" stroke="#FF00FF" stroke-width="1"   opacity="0.52"/>
+            <line x1="0" y1="136" x2="400" y2="136" stroke="#00FFFF" stroke-width="0.5" opacity="0.32"/>
+            <line x1="0" y1="165" x2="400" y2="165" stroke="#FF00FF" stroke-width="0.5" opacity="0.25"/>
+          </g>
+
+          <g id="many-eyes" style="display:none">
+            <g transform="translate(75, 58) rotate(-20) scale(0.35)">
+              <ellipse cx="0" cy="0" rx="88" ry="54" fill="#080818"/>
+              <circle cx="0" cy="0" r="34" fill="#3300AA"/>
+              <circle cx="0" cy="0" r="16" fill="#000"/>
+              <circle cx="-7" cy="-7" r="5" fill="#00FFEE" opacity="0.9"/>
+            </g>
+            <g transform="translate(325, 58) rotate(15) scale(0.35)">
+              <ellipse cx="0" cy="0" rx="88" ry="54" fill="#080818"/>
+              <circle cx="0" cy="0" r="34" fill="#3300AA"/>
+              <circle cx="0" cy="0" r="16" fill="#000"/>
+              <circle cx="-7" cy="-7" r="5" fill="#00FFEE" opacity="0.9"/>
+            </g>
+            <g transform="translate(48, 150) rotate(5) scale(0.28)">
+              <ellipse cx="0" cy="0" rx="88" ry="54" fill="#080818"/>
+              <circle cx="0" cy="0" r="34" fill="#4400CC"/>
+              <circle cx="0" cy="0" r="16" fill="#000"/>
+              <circle cx="-7" cy="-7" r="5" fill="#00FFEE" opacity="0.9"/>
+            </g>
+            <g transform="translate(352, 150) rotate(-5) scale(0.28)">
+              <ellipse cx="0" cy="0" rx="88" ry="54" fill="#080818"/>
+              <circle cx="0" cy="0" r="34" fill="#4400CC"/>
+              <circle cx="0" cy="0" r="16" fill="#000"/>
+              <circle cx="-7" cy="-7" r="5" fill="#00FFEE" opacity="0.9"/>
+            </g>
+            <g transform="translate(90, 242) rotate(25) scale(0.25)">
+              <ellipse cx="0" cy="0" rx="88" ry="54" fill="#080818"/>
+              <circle cx="0" cy="0" r="34" fill="#5500BB"/>
+              <circle cx="0" cy="0" r="16" fill="#000"/>
+              <circle cx="-7" cy="-7" r="4.5" fill="#00FFEE" opacity="0.8"/>
+            </g>
+            <g transform="translate(310, 242) rotate(-25) scale(0.25)">
+              <ellipse cx="0" cy="0" rx="88" ry="54" fill="#080818"/>
+              <circle cx="0" cy="0" r="34" fill="#5500BB"/>
+              <circle cx="0" cy="0" r="16" fill="#000"/>
+              <circle cx="-7" cy="-7" r="4.5" fill="#00FFEE" opacity="0.8"/>
+            </g>
+            <g transform="translate(200, 22) scale(0.22)">
+              <ellipse cx="0" cy="0" rx="88" ry="54" fill="#080818"/>
+              <circle cx="0" cy="0" r="34" fill="#6600BB"/>
+              <circle cx="0" cy="0" r="16" fill="#000"/>
+              <circle cx="-7" cy="-7" r="5" fill="#00FFEE" opacity="0.9"/>
+              <ellipse cx="0" cy="44" rx="5" ry="13" fill="rgba(195,210,235,0.6)"/>
+            </g>
+          </g>
+
+          <g id="patrol-claws" style="opacity:0; transition: opacity 0.4s ease">
+            <polygon points="148,18 158,44 168,18 178,44 188,20 200,46 212,20 222,44 232,18 242,44 252,18"
+              fill="#F5C518" opacity="0.8"/>
+            <polygon points="148,282 158,256 168,282 178,256 188,280 200,254 212,280 222,256 232,282 242,256 252,282"
+              fill="#F5C518" opacity="0.8"/>
+            <polygon points="18,118 44,128 18,138 44,148 18,158 44,168 18,178"
+              fill="#F5C518" opacity="0.7"/>
+            <polygon points="382,118 356,128 382,138 356,148 382,158 356,168 382,178"
+              fill="#F5C518" opacity="0.7"/>
+            <polygon points="52,42  76,58  62,80  85,68  70,44" fill="#F5C518" opacity="0.58"/>
+            <polygon points="348,42 324,58 338,80 315,68 330,44" fill="#F5C518" opacity="0.58"/>
+            <polygon points="52,258 76,242 62,220 85,232 70,256" fill="#F5C518" opacity="0.58"/>
+            <polygon points="348,258 324,242 338,220 315,232 330,256" fill="#F5C518" opacity="0.58"/>
+          </g>
+
+        </svg>
+      </div>
+      <!-- /eye-container -->
+
+      <!-- Terminal de diálogo -->
+      <div class="terminal-output">
+        <div class="terminal-inner">
+          <span id="terminal-text"></span><span class="terminal-cursor" id="terminal-cursor"></span>
+        </div>
+      </div>
+
+    </div>
+    <!-- /crt-screen -->
+
+  </main>
+  <!-- /crt-scanlines -->
+
+  <!-- Cursor customizado (crosshair cyan) -->
+  <div id="cursor">
+    <div class="cursor-h"></div>
+    <div class="cursor-v"></div>
+    <div class="cursor-dot"></div>
+  </div>
+
+  <!-- Scripts -->
+  <script src="js/effects.js"></script>
+  <script src="js/audio.js"></script>
+  <script src="js/eye.js"></script>
+  <script src="js/dialogue.js"></script>
+  <script src="js/stateMachine.js"></script>
+  <script src="js/main.js"></script>
+
+</body>
+</html>

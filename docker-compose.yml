@@ -1,0 +1,30 @@
+# Harley Sawyer Interface — Deploy via Dokploy
+#
+# Domínio: harley.worxtation.com
+# TLS: terminado no Cloudflare Tunnel — Traefik recebe HTTP simples
+#
+# Como usar no Dokploy:
+#   1. Crie um projeto tipo "Docker Compose"
+#   2. Defina APP_DOMAIN=harley.worxtation.com nas variáveis de ambiente
+#   3. O Dokploy detecta a rede dokploy-network automaticamente
+
+services:
+  harley:
+    image: nginx:alpine
+    container_name: harley
+    restart: unless-stopped
+    volumes:
+      - ./:/usr/share/nginx/html:ro
+
+    networks:
+      - dokploy-network
+
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.routers.harley.rule=Host(`${APP_DOMAIN:-harley.worxtation.com}`)"
+      - "traefik.http.routers.harley.entrypoints=web"
+      - "traefik.http.services.harley.loadbalancer.server.port=80"
+
+networks:
+  dokploy-network:
+    external: true

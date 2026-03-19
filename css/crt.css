@@ -1,0 +1,356 @@
+/* =============================================
+   CRT.CSS — Implementação completa seguindo padrão CodePen
+   Estrutura: main.crt-scanlines > div.crt-screen > conteúdo
+   ============================================= */
+
+*, *::before, *::after {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+:root {
+  --bg-main: #050518;
+  --glow-cyan: #00E5FF;
+  --aberration-cyan: #00FFEE;
+  --aberration-red: #FF2222;
+  --patrol-yellow: #F5C518;
+  --aggressive-red: #CC0000;
+  --squinting-magenta: #CC0044;
+  --crimson-iris: #8B0000;
+  --many-violet: #6600BB;
+  --terminal-green: #33FF33;
+  --glitch-cyan: #00FFFF;
+  --glitch-magenta: #FF00FF;
+}
+
+html, body {
+  width: 100%;
+  height: 100%;
+  background: #000;
+  overflow: hidden;
+  font-family: 'Courier New', monospace;
+  cursor: none;
+}
+
+/* =============================================
+   WRAPPER EXTERNO — scanlines + scan beam
+   Padrão do CodePen: main.scanlines com ::before e ::after
+   ============================================= */
+
+main.crt-scanlines {
+  position: fixed;
+  inset: 0;
+  z-index: 1;
+  overflow: hidden;
+  background: var(--bg-main);
+}
+
+/* Scanlines estáticas — grade de linhas horizontais
+   Mesmo padrão do CodePen: linear-gradient 50/50 em 4px */
+main.crt-scanlines::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background:
+    linear-gradient(
+      rgba(0, 0, 0, 0) 50%,
+      rgba(0, 0, 0, 0.25) 50%
+    );
+  background-size: 100% 4px;
+  pointer-events: none;
+  z-index: 50;
+  animation: scanlines-drift 20s linear infinite;
+}
+
+@keyframes scanlines-drift {
+  0%   { background-position: 0 0; }
+  100% { background-position: 0 100px; }
+}
+
+/* Scan beam — faixa de luz varrendo a tela de cima para baixo
+   Simula o feixe de elétrons real do CRT */
+main.crt-scanlines::after {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 20vh;
+  background: linear-gradient(
+    to bottom,
+    transparent                    0%,
+    rgba(255, 255, 255, 0.012)    20%,
+    rgba(255, 255, 255, 0.028)    50%,
+    rgba(255, 255, 255, 0.012)    80%,
+    transparent                   100%
+  );
+  pointer-events: none;
+  z-index: 51;
+  animation: scan-beam 10s linear infinite;
+}
+
+@keyframes scan-beam {
+  0%   { transform: translateY(-20vh); }
+  100% { transform: translateY(120vh); }
+}
+
+/* =============================================
+   SUPERFÍCIE PHOSPHOR — a tela CRT em si
+   Recebe filtros de estado (hue-rotate, saturate, brightness)
+   ============================================= */
+
+.crt-screen {
+  position: absolute;
+  inset: 0;
+  background: var(--bg-main);
+  overflow: hidden;
+}
+
+/* Vignette — barrel distortion simulado + reflexo interno de vidro */
+.crt-screen::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background:
+    /* Barrel distortion: escurece cantos, centro limpo */
+    radial-gradient(ellipse 100% 100% at 50% 50%,
+      transparent            40%,
+      rgba(0, 0, 0, 0.12)   62%,
+      rgba(0, 0, 0, 0.48)   82%,
+      rgba(0, 0, 0, 0.82)  100%
+    ),
+    /* Reflexo de vidro no topo — glare sutil */
+    linear-gradient(
+      180deg,
+      rgba(255, 255, 255, 0.028)  0%,
+      rgba(255, 255, 255, 0.010)  25%,
+      transparent                  50%
+    );
+  pointer-events: none;
+  z-index: 20;
+}
+
+/* Scanlines de estado — overrides do glitch.css (watching, narrowed)
+   Base vazio aqui; os estados adicionam os seus próprios efeitos */
+.crt-screen::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  z-index: 21;
+}
+
+/* =============================================
+   CANVAS — noise e glitch
+   ============================================= */
+
+#noise-canvas {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  opacity: 0.38;
+  z-index: 5;
+  pointer-events: none;
+  mix-blend-mode: screen;
+  /* Canvas roda em 1/3 da resolução, CSS upscala — pixelated mantém o grain */
+  image-rendering: pixelated;
+}
+
+#glitch-canvas {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  pointer-events: none;
+  z-index: 15;
+  opacity: 0;
+  transition: opacity 0.08s;
+}
+
+/* =============================================
+   GLITCH LAYERS CSS
+   ============================================= */
+
+.glitch-layer-1,
+.glitch-layer-2 {
+  position: absolute;
+  inset: 0;
+  background: inherit;
+  pointer-events: none;
+  mix-blend-mode: screen;
+  opacity: 0;
+}
+
+.glitch-layer-1 { z-index: 12; }
+.glitch-layer-2 { z-index: 13; }
+
+/* =============================================
+   CONTAINER DO OLHO SVG
+   ============================================= */
+
+.eye-container {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 10;
+}
+
+#eye-svg {
+  width: min(92vw, 148vh);
+  height: min(69vh, 111vw);
+  filter:
+    drop-shadow(0 0 5px rgba(0, 229, 255, 0.45))
+    drop-shadow(0 0 16px rgba(0, 229, 255, 0.22));
+  transition: filter 0.5s ease;
+}
+
+.eye-glow-active #eye-svg {
+  filter:
+    drop-shadow(0 0 8px rgba(0, 229, 255, 0.85))
+    drop-shadow(0 0 28px rgba(0, 229, 255, 0.52))
+    drop-shadow(0 0 65px rgba(0, 229, 255, 0.25));
+}
+
+/* =============================================
+   TERMINAL DE DIÁLOGO
+   ============================================= */
+
+.terminal-output {
+  position: absolute;
+  bottom: 20px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 72%;
+  text-align: center;
+  z-index: 22;
+  pointer-events: none;
+  min-height: 2em;
+}
+
+.terminal-inner {
+  display: inline-block;
+  padding: 5px 14px 6px;
+  background: rgba(0, 4, 0, 0.62);
+  border: 1px solid rgba(51, 255, 51, 0.22);
+  border-top: 1px solid rgba(51, 255, 51, 0.35);
+  border-radius: 2px;
+  color: var(--terminal-green);
+  font-size: clamp(10px, 1.1vw, 14px);
+  font-family: 'Courier New', monospace;
+  letter-spacing: 0.14em;
+  text-shadow:
+    0 0 5px var(--terminal-green),
+    0 0 12px rgba(51, 255, 51, 0.45);
+  opacity: 0.9;
+  white-space: nowrap;
+  overflow: hidden;
+  max-width: 100%;
+  background-image: repeating-linear-gradient(
+    to bottom,
+    transparent 0px,
+    transparent 2px,
+    rgba(0, 0, 0, 0.08) 2px,
+    rgba(0, 0, 0, 0.08) 3px
+  );
+}
+
+.terminal-cursor {
+  display: inline-block;
+  width: 0.52em;
+  height: 1em;
+  background: var(--terminal-green);
+  vertical-align: text-bottom;
+  margin-left: 2px;
+  animation: cursor-blink 0.72s step-end infinite;
+  box-shadow: 0 0 5px var(--terminal-green);
+}
+
+@keyframes cursor-blink {
+  0%, 100% { opacity: 1; }
+  50%       { opacity: 0; }
+}
+
+/* =============================================
+   FLICKER PHOSPHOR — IDLE, WATCHING
+   ============================================= */
+
+@keyframes phosphor-flicker {
+  0%,  100% { opacity: 1.000; }
+  7%         { opacity: 0.985; }
+  8%         { opacity: 0.942; }
+  9%         { opacity: 0.998; }
+  19%        { opacity: 0.975; }
+  20%        { opacity: 1.000; }
+  51%        { opacity: 0.990; }
+  52%        { opacity: 0.955; }
+  53%        { opacity: 1.000; }
+  71%        { opacity: 0.982; }
+  72%        { opacity: 0.948; }
+  73%        { opacity: 1.000; }
+  92%        { opacity: 0.972; }
+  93%        { opacity: 0.940; }
+  94%        { opacity: 1.000; }
+}
+
+.crt-flicker {
+  animation: phosphor-flicker 7s infinite linear;
+}
+
+/* =============================================
+   CURSOR CUSTOMIZADO — crosshair cyan
+   ============================================= */
+
+#cursor {
+  position: fixed;
+  top: 0;
+  left: 0;
+  pointer-events: none;
+  z-index: 9999;
+  transform: translate(-50%, -50%);
+  mix-blend-mode: difference;
+  will-change: transform;
+}
+
+.cursor-h {
+  position: absolute;
+  top: 50%;
+  left: -8px;
+  width: 16px;
+  height: 1px;
+  background: #00E5FF;
+  transform: translateY(-50%);
+  box-shadow: 0 0 4px rgba(0, 229, 255, 0.8);
+}
+
+.cursor-v {
+  position: absolute;
+  left: 50%;
+  top: -8px;
+  height: 16px;
+  width: 1px;
+  background: #00E5FF;
+  transform: translateX(-50%);
+  box-shadow: 0 0 4px rgba(0, 229, 255, 0.8);
+}
+
+.cursor-dot {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: 3px;
+  height: 3px;
+  border-radius: 50%;
+  background: #00E5FF;
+  box-shadow: 0 0 6px #00E5FF;
+}
