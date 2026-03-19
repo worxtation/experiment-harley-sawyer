@@ -157,10 +157,9 @@
   align-items: stretch;
   padding: 0;
   text-align: left;
-}
-
-.terminal-output .crt-window-titlebar {
-  flex-shrink: 0;
+  pointer-events: none;
+  user-select: none;
+  min-height: 2em;
 }
 
 .terminal-output .terminal-inner {

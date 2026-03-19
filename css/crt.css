@@ -279,13 +279,6 @@ main.crt-scanlines::after {
    Posicionamento flutuante definido em windows.css (#terminal-window)
    ============================================= */
 
-.terminal-output {
-  text-align: center;
-  pointer-events: none;
-  user-select: none;
-  min-height: 2em;
-}
-
 .terminal-inner {
   display: inline-block;
   padding: 8px 14px 6px;

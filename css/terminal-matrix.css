@@ -4,14 +4,12 @@
    Fonte: github.com/panr/terminal-css (classless, semantic styles)
 
    Estratégia de escopo:
-     - Variáveis Matrix aplicadas em #terminal-window
-     - Variáveis Cyan aplicadas em #eye-window
+     - Variáveis Cyan aplicadas em #terminal-window e #eye-window
      - Estilos de elementos (pre, code, button, table) escopados
-       dentro de .terminal-scope para não vazar ao restante da UI
+       dentro de #terminal-window .terminal-inner para não vazar
    ============================================= */
 
 /* ─── Variáveis Terminal CSS (defaults) ──────────────────────────── */
-/* Replicando a especificação de variables.css do terminal-css */
 
 :root {
   --terminal-font-size: clamp(10px, 1.1vw, 14px);
@@ -19,19 +17,19 @@
   --terminal-radius: 0px;
 }
 
-/* ─── Tema Matrix — aplicado ao terminal-window ──────────────────── */
-/* Matrix preset: background #000000 / foreground #4EEE85 / accent #4EEE85 */
+/* ─── Tema Cyan — terminal-window ────────────────────────────────── */
 
 #terminal-window {
-  --background: #000000;
-  --foreground: #4EEE85;
-  --accent:     #4EEE85;
+  --background: transparent;
+  --foreground: #00E5FF;
+  --accent:     #00E5FF;
   --font-size:  var(--terminal-font-size);
   --line-height: var(--terminal-line-height);
   --radius:     var(--terminal-radius);
+  border-color: color-mix(in srgb, var(--accent) 18%, transparent);
 }
 
-/* ─── Tema Cyan — aplicado ao eye-window ─────────────────────────── */
+/* ─── Tema Cyan — eye-window ─────────────────────────────────────── */
 /* Neutro/cyan para não competir com o olho SVG */
 
 #eye-window {
@@ -41,24 +39,10 @@
   --font-size:  10px;
   --line-height: var(--terminal-line-height);
   --radius:     var(--terminal-radius);
+  border-color: color-mix(in srgb, var(--accent) 18%, transparent);
 }
 
 /* ─── Titlebar integrada com variáveis terminal.css ─────────────── */
-/* Substitui os rgba(var(--win-*)) por var(--accent) do tema */
-
-#terminal-window .crt-window-titlebar {
-  font-family: var(--font-mono);
-  color: color-mix(in srgb, var(--accent) 55%, transparent);
-  background: color-mix(in srgb, var(--accent) 4%, transparent);
-  border-bottom-color: color-mix(in srgb, var(--accent) 14%, transparent);
-}
-
-#terminal-window.window-active .crt-window-titlebar {
-  color: var(--accent);
-  background: color-mix(in srgb, var(--accent) 8%, transparent);
-  border-bottom-color: color-mix(in srgb, var(--accent) 35%, transparent);
-  text-shadow: 0 0 10px color-mix(in srgb, var(--accent) 50%, transparent);
-}
 
 #eye-window .crt-window-titlebar {
   font-family: var(--font-mono);
@@ -74,7 +58,7 @@
   text-shadow: 0 0 10px color-mix(in srgb, var(--accent) 45%, transparent);
 }
 
-/* ─── Badge e dots usando variáveis do tema ──────────────────────── */
+/* ─── Badge de estado ────────────────────────────────────────────── */
 
 #terminal-window .crt-window-badge {
   color: color-mix(in srgb, var(--accent) 35%, transparent);
@@ -85,49 +69,26 @@
   text-shadow: 0 0 8px color-mix(in srgb, var(--accent) 65%, transparent);
 }
 
-#eye-window .crt-window-badge {
-}
-
 #eye-window.window-active .crt-window-badge {
   color: var(--accent);
 }
 
-#terminal-window .crt-win-dot {
-  border-color: color-mix(in srgb, var(--accent) 28%, transparent);
-}
+/* ─── Control dots ───────────────────────────────────────────────── */
 
-#terminal-window.window-active .crt-win-dot {
-  border-color: color-mix(in srgb, var(--accent) 70%, transparent);
-  box-shadow: 0 0 4px color-mix(in srgb, var(--accent) 40%, transparent);
-}
-
+#terminal-window .crt-win-dot,
 #eye-window .crt-win-dot {
   border-color: color-mix(in srgb, var(--accent) 28%, transparent);
 }
 
+#terminal-window.window-active .crt-win-dot,
 #eye-window.window-active .crt-win-dot {
-  border-color: color-mix(in srgb, var(--accent) 65%, transparent);
+  border-color: color-mix(in srgb, var(--accent) 70%, transparent);
   box-shadow: 0 0 4px color-mix(in srgb, var(--accent) 40%, transparent);
 }
 
-/* ─── Border das janelas usando variáveis do tema ────────────────── */
+/* ─── Border ativa das janelas ───────────────────────────────────── */
 
-#terminal-window {
-  border-color: color-mix(in srgb, var(--accent) 18%, transparent);
-}
-
-#terminal-window.window-active {
-  border-color: color-mix(in srgb, var(--accent) 62%, transparent);
-  box-shadow:
-    3px 3px 0 0 rgba(0, 0, 0, 0.88),
-    0 0 14px color-mix(in srgb, var(--accent) 22%, transparent),
-    0 0 36px color-mix(in srgb, var(--accent) 10%, transparent);
-}
-
-#eye-window {
-  border-color: color-mix(in srgb, var(--accent) 18%, transparent);
-}
-
+#terminal-window.window-active,
 #eye-window.window-active {
   border-color: color-mix(in srgb, var(--accent) 62%, transparent);
   box-shadow:
@@ -137,7 +98,6 @@
 }
 
 /* ─── Conteúdo terminal-inner com estilo terminal.css ────────────── */
-/* terminal.css: pre, code, blockquote escopados dentro do terminal-inner */
 
 .terminal-inner {
   font-family: var(--font-mono);
@@ -152,7 +112,7 @@
   box-shadow: 0 0 5px var(--foreground, #4EEE85);
 }
 
-/* Estilo terminal.css para elementos dentro do terminal-inner */
+/* Elementos dentro do terminal-inner */
 #terminal-window .terminal-inner pre,
 #terminal-window .terminal-inner code {
   font-family: var(--font-mono);
@@ -168,7 +128,6 @@
   color: var(--accent);
 }
 
-/* hr no estilo terminal.css */
 #terminal-window .terminal-inner hr {
   border: none;
   background: var(--accent);
@@ -177,7 +136,6 @@
 }
 
 /* ─── Ajuste do text-shadow do #terminal-text ────────────────────── */
-/* Glow fósforo usando variável do tema */
 
 #terminal-text {
   text-shadow:
@@ -185,44 +143,26 @@
     0 0 12px color-mix(in srgb, var(--foreground, #4EEE85) 45%, transparent);
 }
 
-/* ─── Overrides de estado: quando o estado muda a cor --win-* ─────── */
-/* Os estados (aggressive, patrol, many) redefinem --win-r/g/b em windows.css.
-   Aqui garantimos que os IDs de janela respondam às variáveis de estado
-   durante transições, fazendo fallback para --win-* quando não estamos
-   no estado padrão returns/watching/idle */
+/* ─── Overrides de estado: redefinição de --accent/--foreground ───── */
+/* Estados de alerta/emoção redefinem as variáveis de tema nas duas janelas */
 
 .state-aggressive #terminal-window,
-.state-crimson    #terminal-window,
-.state-squinting  #terminal-window {
-  --accent:     rgba(220, 0, 0, 0.9);
-  --foreground: rgba(220, 0, 0, 0.85);
-  --background: #0a0000;
-}
-
-.state-patrol #terminal-window {
-  --accent:     rgba(245, 197, 24, 0.9);
-  --foreground: rgba(245, 197, 24, 0.85);
-  --background: #080600;
-}
-
-.state-many #terminal-window {
-  --accent:     rgba(130, 0, 220, 0.9);
-  --foreground: rgba(180, 80, 255, 0.85);
-  --background: #060010;
-}
-
 .state-aggressive #eye-window,
+.state-crimson    #terminal-window,
 .state-crimson    #eye-window,
+.state-squinting  #terminal-window,
 .state-squinting  #eye-window {
   --accent:     #DC0000;
   --foreground: #DC0000;
 }
 
+.state-patrol #terminal-window,
 .state-patrol #eye-window {
   --accent:     #F5C518;
   --foreground: #F5C518;
 }
 
+.state-many #terminal-window,
 .state-many #eye-window {
   --accent:     #8200DC;
   --foreground: #B450FF;
