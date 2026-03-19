@@ -127,10 +127,16 @@
 
 #eye-window {
   position: absolute;
-  inset: 8px;
+  /* Centralização real nos dois eixos — sem inset conflitante */
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
   z-index: 10;
   display: flex;
   flex-direction: column;
+  /* Dimensões espelham as do #eye-svg — janela abraça o conteúdo */
+  width: min(92vw, 148vh);
+  height: min(69vh, 111vw);
 }
 
 /* ─── Terminal window — base da tela, centralizado horizontalmente ──────── */
