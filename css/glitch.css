@@ -13,10 +13,14 @@
 }
 
 .crt-screen {
+  /* Filtros aplicados na superfície do monitor (não no conteúdo):
+     1. Ajuste de cor por estado
+     2. Aberração cromática de tela — separa R/Cyan em toda a superfície */
   filter:
     hue-rotate(var(--color-shift))
     saturate(var(--saturation-mult))
-    brightness(var(--brightness-mult));
+    brightness(var(--brightness-mult))
+    url(#screen-chroma);
   transition: filter 0.35s ease;
 }
 
