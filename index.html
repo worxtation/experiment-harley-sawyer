@@ -408,14 +408,13 @@
   </main>
   <!-- /crt-scanlines -->
 
-      <!-- Janela de terminal — dentro do crt-screen (sofre filtros de estado) -->
-      <div class="terminal-output crt-window" id="terminal-window">
-        <!-- Chrome da janela: titlebar -->
-        <div class="terminal-inner">
-          <span id="terminal-text"></span><span class="terminal-cursor" id="terminal-cursor"></span>
-        </div>
-      </div>
-      <!-- /terminal-window -->
+  <!-- Janela de terminal — fora do crt-screen para não sofrer filtros de tela -->
+  <div class="terminal-output crt-window" id="terminal-window">
+    <div class="terminal-inner">
+      <span id="terminal-text"></span><span class="terminal-cursor" id="terminal-cursor"></span>
+    </div>
+  </div>
+  <!-- /terminal-window -->
 
   <!-- Cursor customizado (crosshair cyan) -->
   <div id="cursor">
@@ -425,11 +424,13 @@
   </div>
 
   <!-- Scripts -->
+  <script src="js/dev-panel.js"></script>
   <script src="js/effects.js"></script>
   <script src="js/audio.js"></script>
   <script src="js/eye.js"></script>
   <script src="js/dialogue.js"></script>
   <script src="js/stateMachine.js"></script>
+  <script src="js/voice.js"></script>
   <script src="js/main.js"></script>
 
 </body>

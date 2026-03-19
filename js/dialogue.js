@@ -338,5 +338,5 @@ const Dialogue = (() => {
     typeTimer = setTimeout(type, 80);
   }
 
-  return { init, sayForState, typeText, typeGlitched, stopCurrent };
+  return { init, sayForState, typeText, typeGlitched, stopCurrent, fadeOut };
 })();

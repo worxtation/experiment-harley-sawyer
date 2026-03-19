@@ -91,6 +91,7 @@ document.addEventListener('DOMContentLoaded', () => {
   document.addEventListener('click', () => {
     if (!audioInitialized) {
       Audio.init();
+      Voice.init();
       audioInitialized = true;
     }
   });
@@ -163,6 +164,7 @@ document.addEventListener('DOMContentLoaded', () => {
     clearTimeout(dialogueTimer);
 
     if (state === 'closed') return;
+    if (Voice.isPlaying()) return;
 
     if (state === 'returns') {
       dialogueTimer = setTimeout(() => {
@@ -222,7 +224,7 @@ document.addEventListener('DOMContentLoaded', () => {
   function scheduleIdleDialogue() {
     const delay = 14000 + Math.random() * 12000;
     setTimeout(() => {
-      if (StateMachine.getState() === 'idle') {
+      if (StateMachine.getState() === 'idle' && !Voice.isPlaying()) {
         Dialogue.sayForState('idle');
       }
       scheduleIdleDialogue();
