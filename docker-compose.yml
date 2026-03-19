@@ -15,6 +15,7 @@ services:
     restart: unless-stopped
     volumes:
       - ./:/usr/share/nginx/html:ro
+      - ./nginx.conf:/etc/nginx/conf.d/default.conf:ro
 
     networks:
       - dokploy-network
@@ -23,7 +24,7 @@ services:
       - "traefik.enable=true"
       - "traefik.http.routers.harley.rule=Host(`${APP_DOMAIN:-harley.worxtation.com}`)"
       - "traefik.http.routers.harley.entrypoints=web"
-      - "traefik.http.services.harley.loadbalancer.server.port=80"
+      - "traefik.http.services.harley.loadbalancer.server.port=8765"
 
 networks:
   dokploy-network:
