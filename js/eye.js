@@ -101,19 +101,20 @@ const Eye = (() => {
    *   shutdown  — Ausência. Olho completamente fechado — página perdeu foco.
    */
   const STATE_PARAMS = {
-    idle:       { topY: 80,   botY: 220, irisR: 60, pupilR: 28, irisColor: '#1A1A3E', glowColor: '#00E5FF', rings: false, marks: false, dualPupil: false, showCorona: false, showTeeth: false },
-    watching:   { topY: 35,   botY: 272, irisR: 54, pupilR: 19, irisColor: '#1A1A3E', glowColor: '#00E5FF', rings: true,  marks: false, dualPupil: false, showCorona: false, showTeeth: false },
-    amused:     { topY: 178,  botY: 236, irisR: 60, pupilR: 25, irisColor: '#1A1A3E', glowColor: '#00AACC', rings: false, marks: false, dualPupil: false, showCorona: false, showTeeth: false },
-    squinting:  { topY: 118,  botY: 196, irisR: 60, pupilR: 22, irisColor: '#1A1A3E', glowColor: '#CC0044', rings: false, marks: true,  dualPupil: false, showCorona: false, showTeeth: false },
-    crimson:    { topY: 158,  botY: 242, irisR: 67, pupilR: 19, irisColor: '#8B0000', glowColor: '#8B0000', rings: false, marks: false, dualPupil: false, showCorona: false, showTeeth: false },
+    //                topY  botY  — abertura = botY - topY  (CY=150; top↓ fecha, bot↑ fecha)
+    idle:       { topY: 52,   botY: 248, irisR: 60, pupilR: 28, irisColor: '#1A1A3E', glowColor: '#00E5FF', rings: false, marks: false, dualPupil: false, showCorona: false, showTeeth: false },
+    watching:   { topY: 18,   botY: 282, irisR: 54, pupilR: 19, irisColor: '#1A1A3E', glowColor: '#00E5FF', rings: true,  marks: false, dualPupil: false, showCorona: false, showTeeth: false },
+    amused:     { topY: 158,  botY: 248, irisR: 60, pupilR: 25, irisColor: '#1A1A3E', glowColor: '#00AACC', rings: false, marks: false, dualPupil: false, showCorona: false, showTeeth: false },
+    squinting:  { topY: 92,   botY: 210, irisR: 60, pupilR: 22, irisColor: '#1A1A3E', glowColor: '#CC0044', rings: false, marks: true,  dualPupil: false, showCorona: false, showTeeth: false },
+    crimson:    { topY: 128,  botY: 252, irisR: 67, pupilR: 19, irisColor: '#8B0000', glowColor: '#8B0000', rings: false, marks: false, dualPupil: false, showCorona: false, showTeeth: false },
     aggressive: { topY: -30,  botY: 330, irisR: 92, pupilR:  8, irisColor: '#CC0000', glowColor: '#CC0000', rings: false, marks: false, dualPupil: false, showCorona: true,  showTeeth: false },
-    patrol:     { topY: 68,   botY: 232, irisR: 64, pupilR: 14, irisColor: '#F5C518', glowColor: '#F5C518', rings: false, marks: false, dualPupil: true,  showCorona: false, showTeeth: false },
-    narrowed:   { topY: 134,  botY: 174, irisR: 53, pupilR: 17, irisColor: '#1A1A3E', glowColor: '#00E5FF', rings: false, marks: false, dualPupil: false, showCorona: false, showTeeth: false },
-    many:       { topY: 30,   botY: 272, irisR: 62, pupilR: 24, irisColor: '#6600BB', glowColor: '#6600BB', rings: true,  marks: false, dualPupil: false, showCorona: false, showTeeth: false },
+    patrol:     { topY: 42,   botY: 256, irisR: 64, pupilR: 14, irisColor: '#F5C518', glowColor: '#F5C518', rings: false, marks: false, dualPupil: true,  showCorona: false, showTeeth: false },
+    narrowed:   { topY: 128,  botY: 182, irisR: 53, pupilR: 17, irisColor: '#1A1A3E', glowColor: '#00E5FF', rings: false, marks: false, dualPupil: false, showCorona: false, showTeeth: false },
+    many:       { topY: 18,   botY: 282, irisR: 62, pupilR: 24, irisColor: '#6600BB', glowColor: '#6600BB', rings: true,  marks: false, dualPupil: false, showCorona: false, showTeeth: false },
     closed:     { topY: 150,  botY: 152, irisR: 60, pupilR: 24, irisColor: '#1A1A3E', glowColor: '#00E5FF', rings: false, marks: false, dualPupil: false, showCorona: false, showTeeth: false },
-    ethereal:   { topY: 40,   botY: 262, irisR: 60, pupilR: 40, irisColor: '#0A0A22', glowColor: '#00E5FF', rings: false, marks: false, dualPupil: false, showCorona: false, showTeeth: false },
+    ethereal:   { topY: 20,   botY: 272, irisR: 60, pupilR: 40, irisColor: '#0A0A22', glowColor: '#00E5FF', rings: false, marks: false, dualPupil: false, showCorona: false, showTeeth: false },
     returns:    { topY: 300,  botY: 220, irisR: 60, pupilR: 30, irisColor: '#0D1A0D', glowColor: '#00C864', rings: false, marks: false, dualPupil: false, showCorona: false, showTeeth: false },
-    bared:      { topY: 40,   botY: 220, irisR: 60, pupilR: 46, irisColor: '#1A0005', glowColor: '#CC0044', rings: false, marks: false, dualPupil: false, showCorona: false, showTeeth: true  },
+    bared:      { topY: 20,   botY: 240, irisR: 60, pupilR: 46, irisColor: '#1A0005', glowColor: '#CC0044', rings: false, marks: false, dualPupil: false, showCorona: false, showTeeth: true  },
     shutdown:   { topY: 300,  botY:   0, irisR: 60, pupilR: 24, irisColor: '#050518', glowColor: '#000000', rings: false, marks: false, dualPupil: false, showCorona: false, showTeeth: false },
   };
 
