@@ -47,7 +47,7 @@
 /* Substitui os rgba(var(--win-*)) por var(--accent) do tema */
 
 #terminal-window .crt-window-titlebar {
-  font-family: "Fira Code", "JetBrains Mono", 'Courier New', monospace;
+  font-family: var(--font-mono);
   color: color-mix(in srgb, var(--accent) 55%, transparent);
   background: color-mix(in srgb, var(--accent) 4%, transparent);
   border-bottom-color: color-mix(in srgb, var(--accent) 14%, transparent);
@@ -61,7 +61,7 @@
 }
 
 #eye-window .crt-window-titlebar {
-  font-family: "Fira Code", "JetBrains Mono", 'Courier New', monospace;
+  font-family: var(--font-mono);
   color: color-mix(in srgb, var(--accent) 45%, transparent);
   background: color-mix(in srgb, var(--accent) 3%, transparent);
   border-bottom-color: color-mix(in srgb, var(--accent) 12%, transparent);
@@ -86,12 +86,10 @@
 }
 
 #eye-window .crt-window-badge {
-  color: color-mix(in srgb, var(--accent) 35%, transparent);
 }
 
 #eye-window.window-active .crt-window-badge {
   color: var(--accent);
-  text-shadow: 0 0 8px color-mix(in srgb, var(--accent) 60%, transparent);
 }
 
 #terminal-window .crt-win-dot {
@@ -142,7 +140,7 @@
 /* terminal.css: pre, code, blockquote escopados dentro do terminal-inner */
 
 .terminal-inner {
-  font-family: "Fira Code", "JetBrains Mono", 'Courier New', monospace;
+  font-family: var(--font-mono);
   color: var(--foreground, #4EEE85);
   background: color-mix(in srgb, var(--background, #000) 85%, transparent);
   border-top-color: color-mix(in srgb, var(--accent, #4EEE85) 25%, transparent);
@@ -157,7 +155,7 @@
 /* Estilo terminal.css para elementos dentro do terminal-inner */
 #terminal-window .terminal-inner pre,
 #terminal-window .terminal-inner code {
-  font-family: "Fira Code", "JetBrains Mono", 'Courier New', monospace;
+  font-family: var(--font-mono);
   background: color-mix(in srgb, var(--foreground) 5%, transparent);
   color: color-mix(in srgb, var(--foreground) 5%, var(--accent));
   border: 1px solid color-mix(in srgb, var(--foreground) 25%, transparent);

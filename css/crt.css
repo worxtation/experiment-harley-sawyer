@@ -10,6 +10,9 @@
 }
 
 :root {
+  --font-mono:
+    "Menlo", "Monaco", "Lucida Console", "Liberation Mono",
+    "DejaVu Sans Mono", "Bitstream Vera Sans Mono", "Courier New", serif;
   --bg-main: #05030e;
   --glow-cyan: #00E5FF;
   --aberration-cyan: #00FFEE;
@@ -29,7 +32,7 @@ html, body {
   height: 100%;
   background: #030209;
   overflow: hidden;
-  font-family: 'Courier New', monospace;
+  font-family: var(--font-mono);
   cursor: none;
 }
 
@@ -285,7 +288,7 @@ main.crt-scanlines::after {
 
 .terminal-inner {
   display: inline-block;
-  padding: 5px 14px 6px;
+  padding: 8px 14px 6px;
   /* background e border usam variáveis do tema injetadas por terminal-matrix.css */
   background: color-mix(in srgb, var(--background, #000400) 85%, transparent);
   border: 1px solid color-mix(in srgb, var(--accent, #33FF33) 22%, transparent);
@@ -293,7 +296,7 @@ main.crt-scanlines::after {
   border-radius: 2px;
   color: var(--foreground, var(--terminal-green));
   font-size: var(--font-size, clamp(10px, 1.1vw, 14px));
-  font-family: "Fira Code", "JetBrains Mono", 'Courier New', monospace;
+  font-family: var(--font-mono);
   letter-spacing: 0.14em;
   text-shadow:
     0 0 5px var(--foreground, var(--terminal-green)),

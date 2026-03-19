@@ -10,6 +10,7 @@ const Dialogue = (() => {
   let cursorEl = null;
   let typeTimer = null;
   let clearTimer = null;
+  let eraseTimer = null;
   let isTyping = false;
   let currentState = 'idle';
 
@@ -241,34 +242,51 @@ const Dialogue = (() => {
   function sayForState(state) {
     stopCurrent();
     currentState = state;
-
     const phrase = pickPhrase(state);
 
-    typeText(phrase, state, () => {
-      const pause = getPauseDuration(phrase);
-      clearTimer = setTimeout(() => {
-        fadeOut();
-      }, pause);
-    });
+    if (['many', 'bared'].includes(state)) {
+      typeGlitched(phrase, () => {
+        const pause = getPauseDuration(phrase);
+        clearTimer = setTimeout(fadeOut, pause);
+      });
+    } else {
+      typeText(phrase, state, () => {
+        const pause = getPauseDuration(phrase);
+        clearTimer = setTimeout(fadeOut, pause);
+      });
+    }
+  }
+
+  function eraseText(onDone) {
+    if (!outputEl) { if (onDone) onDone(); return; }
+
+    const erase = () => {
+      const text = outputEl.textContent;
+      if (text.length === 0) {
+        if (onDone) onDone();
+        return;
+      }
+      // Apaga caractere por caractere — velocidade ligeiramente mais rápida que a digitação
+      outputEl.textContent = text.slice(0, -1);
+      eraseTimer = setTimeout(erase, 28 + Math.random() * 42);
+    };
+
+    // Pausa curta antes de começar a apagar — ele hesita um instante
+    eraseTimer = setTimeout(erase, 120 + Math.random() * 180);
   }
 
   function fadeOut() {
     if (!outputEl) return;
-    outputEl.style.transition = 'opacity 0.6s ease';
-    outputEl.style.opacity = '0';
-    setTimeout(() => {
-      if (outputEl) {
-        outputEl.textContent = '';
-        outputEl.style.opacity = '0.9';
-        outputEl.style.transition = '';
-      }
+    setTerminalFocus(true, 'DEL');  // badge indica que está apagando
+    eraseText(() => {
       setTerminalFocus(false);   // terminal silenciou — janela perde foco
-    }, 600);
+    });
   }
 
   function stopCurrent() {
     clearTimeout(typeTimer);
     clearTimeout(clearTimer);
+    clearTimeout(eraseTimer);
     isTyping = false;
     if (outputEl) {
       outputEl.textContent = '';
@@ -286,6 +304,7 @@ const Dialogue = (() => {
     if (!outputEl) outputEl = document.getElementById('terminal-text');
     if (!outputEl) return;
     isTyping = true;
+    setTerminalFocus(true, 'REC');
     outputEl.textContent = '';
 
     const glitchChars = '█▓▒░╬╫╪╩╦╠═╤╣╢╡╟╞╝╜╛╚╙╘╗╖╕╔╓╒║═╏╎╍╌─│';
@@ -294,6 +313,7 @@ const Dialogue = (() => {
     const type = () => {
       if (i >= text.length) {
         isTyping = false;
+        setTerminalFocus(true, 'TX');
         if (onDone) onDone();
         return;
       }

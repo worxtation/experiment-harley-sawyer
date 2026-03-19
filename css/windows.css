@@ -59,7 +59,7 @@
   padding: 3px 10px;
   background: rgba(var(--win-r), var(--win-g), var(--win-b), 0.04);
   border-bottom: 1px solid rgba(var(--win-r), var(--win-g), var(--win-b), 0.14);
-  font-family: 'Courier New', monospace;
+  font-family: var(--font-mono);
   font-size: 10px;
   letter-spacing: 0.14em;
   color: rgba(var(--win-r), var(--win-g), var(--win-b), 0.32);
@@ -146,7 +146,6 @@
   bottom: 22px;
   left: 50%;
   transform: translateX(-50%);
-  width: 72%;
   z-index: 30;
 }
 
