@@ -286,17 +286,18 @@ main.crt-scanlines::after {
 .terminal-inner {
   display: inline-block;
   padding: 5px 14px 6px;
-  background: rgba(0, 4, 0, 0.62);
-  border: 1px solid rgba(51, 255, 51, 0.22);
-  border-top: 1px solid rgba(51, 255, 51, 0.35);
+  /* background e border usam variáveis do tema injetadas por terminal-matrix.css */
+  background: color-mix(in srgb, var(--background, #000400) 85%, transparent);
+  border: 1px solid color-mix(in srgb, var(--accent, #33FF33) 22%, transparent);
+  border-top: 1px solid color-mix(in srgb, var(--accent, #33FF33) 35%, transparent);
   border-radius: 2px;
-  color: var(--terminal-green);
-  font-size: clamp(10px, 1.1vw, 14px);
-  font-family: 'Courier New', monospace;
+  color: var(--foreground, var(--terminal-green));
+  font-size: var(--font-size, clamp(10px, 1.1vw, 14px));
+  font-family: "Fira Code", "JetBrains Mono", 'Courier New', monospace;
   letter-spacing: 0.14em;
   text-shadow:
-    0 0 5px var(--terminal-green),
-    0 0 12px rgba(51, 255, 51, 0.45);
+    0 0 5px var(--foreground, var(--terminal-green)),
+    0 0 12px color-mix(in srgb, var(--foreground, #33FF33) 45%, transparent);
   opacity: 0.9;
   white-space: nowrap;
   overflow: hidden;
@@ -314,11 +315,11 @@ main.crt-scanlines::after {
   display: inline-block;
   width: 0.52em;
   height: 1em;
-  background: var(--terminal-green);
+  background: var(--foreground, var(--terminal-green));
   vertical-align: text-bottom;
   margin-left: 2px;
   animation: cursor-blink 0.72s step-end infinite;
-  box-shadow: 0 0 5px var(--terminal-green);
+  box-shadow: 0 0 5px var(--foreground, var(--terminal-green));
 }
 
 @keyframes cursor-blink {

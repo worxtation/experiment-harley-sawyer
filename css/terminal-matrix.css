@@ -1,0 +1,244 @@
+/* =============================================
+   TERMINAL-MATRIX.CSS
+   Integração da biblioteca terminal.css com tema Matrix
+   Fonte: github.com/panr/terminal-css (classless, semantic styles)
+
+   Estratégia de escopo:
+     - Variáveis Matrix aplicadas em #terminal-window
+     - Variáveis Cyan aplicadas em #eye-window
+     - Estilos de elementos (pre, code, button, table) escopados
+       dentro de .terminal-scope para não vazar ao restante da UI
+   ============================================= */
+
+/* ─── Variáveis Terminal CSS (defaults) ──────────────────────────── */
+/* Replicando a especificação de variables.css do terminal-css */
+
+:root {
+  --terminal-font-size: clamp(10px, 1.1vw, 14px);
+  --terminal-line-height: 1.54em;
+  --terminal-radius: 0px;
+}
+
+/* ─── Tema Matrix — aplicado ao terminal-window ──────────────────── */
+/* Matrix preset: background #000000 / foreground #4EEE85 / accent #4EEE85 */
+
+#terminal-window {
+  --background: #000000;
+  --foreground: #4EEE85;
+  --accent:     #4EEE85;
+  --font-size:  var(--terminal-font-size);
+  --line-height: var(--terminal-line-height);
+  --radius:     var(--terminal-radius);
+}
+
+/* ─── Tema Cyan — aplicado ao eye-window ─────────────────────────── */
+/* Neutro/cyan para não competir com o olho SVG */
+
+#eye-window {
+  --background: transparent;
+  --foreground: rgba(0, 229, 255, 0.72);
+  --accent:     rgba(0, 229, 255, 0.88);
+  --font-size:  10px;
+  --line-height: var(--terminal-line-height);
+  --radius:     var(--terminal-radius);
+}
+
+/* ─── Titlebar integrada com variáveis terminal.css ─────────────── */
+/* Substitui os rgba(var(--win-*)) por var(--accent) do tema */
+
+#terminal-window .crt-window-titlebar {
+  font-family: "Fira Code", "JetBrains Mono", 'Courier New', monospace;
+  color: color-mix(in srgb, var(--accent) 55%, transparent);
+  background: color-mix(in srgb, var(--accent) 4%, transparent);
+  border-bottom-color: color-mix(in srgb, var(--accent) 14%, transparent);
+}
+
+#terminal-window.window-active .crt-window-titlebar {
+  color: var(--accent);
+  background: color-mix(in srgb, var(--accent) 8%, transparent);
+  border-bottom-color: color-mix(in srgb, var(--accent) 35%, transparent);
+  text-shadow: 0 0 10px color-mix(in srgb, var(--accent) 50%, transparent);
+}
+
+#eye-window .crt-window-titlebar {
+  font-family: "Fira Code", "JetBrains Mono", 'Courier New', monospace;
+  color: color-mix(in srgb, var(--accent) 45%, transparent);
+  background: color-mix(in srgb, var(--accent) 3%, transparent);
+  border-bottom-color: color-mix(in srgb, var(--accent) 12%, transparent);
+}
+
+#eye-window.window-active .crt-window-titlebar {
+  color: var(--accent);
+  background: color-mix(in srgb, var(--accent) 7%, transparent);
+  border-bottom-color: color-mix(in srgb, var(--accent) 30%, transparent);
+  text-shadow: 0 0 10px color-mix(in srgb, var(--accent) 45%, transparent);
+}
+
+/* ─── Badge e dots usando variáveis do tema ──────────────────────── */
+
+#terminal-window .crt-window-badge {
+  color: color-mix(in srgb, var(--accent) 35%, transparent);
+}
+
+#terminal-window.window-active .crt-window-badge {
+  color: var(--accent);
+  text-shadow: 0 0 8px color-mix(in srgb, var(--accent) 65%, transparent);
+}
+
+#eye-window .crt-window-badge {
+  color: color-mix(in srgb, var(--accent) 35%, transparent);
+}
+
+#eye-window.window-active .crt-window-badge {
+  color: var(--accent);
+  text-shadow: 0 0 8px color-mix(in srgb, var(--accent) 60%, transparent);
+}
+
+#terminal-window .crt-win-dot {
+  border-color: color-mix(in srgb, var(--accent) 28%, transparent);
+}
+
+#terminal-window.window-active .crt-win-dot {
+  border-color: color-mix(in srgb, var(--accent) 70%, transparent);
+  box-shadow: 0 0 4px color-mix(in srgb, var(--accent) 40%, transparent);
+}
+
+#eye-window .crt-win-dot {
+  border-color: color-mix(in srgb, var(--accent) 28%, transparent);
+}
+
+#eye-window.window-active .crt-win-dot {
+  border-color: color-mix(in srgb, var(--accent) 65%, transparent);
+  box-shadow: 0 0 4px color-mix(in srgb, var(--accent) 40%, transparent);
+}
+
+/* ─── Border das janelas usando variáveis do tema ────────────────── */
+
+#terminal-window {
+  border-color: color-mix(in srgb, var(--accent) 18%, transparent);
+}
+
+#terminal-window.window-active {
+  border-color: color-mix(in srgb, var(--accent) 62%, transparent);
+  box-shadow:
+    3px 3px 0 0 rgba(0, 0, 0, 0.88),
+    0 0 14px color-mix(in srgb, var(--accent) 22%, transparent),
+    0 0 36px color-mix(in srgb, var(--accent) 10%, transparent);
+}
+
+#eye-window {
+  border-color: color-mix(in srgb, var(--accent) 18%, transparent);
+}
+
+#eye-window.window-active {
+  border-color: color-mix(in srgb, var(--accent) 62%, transparent);
+  box-shadow:
+    3px 3px 0 0 rgba(0, 0, 0, 0.88),
+    0 0 14px color-mix(in srgb, var(--accent) 22%, transparent),
+    0 0 36px color-mix(in srgb, var(--accent) 10%, transparent);
+}
+
+/* ─── Conteúdo terminal-inner com estilo terminal.css ────────────── */
+/* terminal.css: pre, code, blockquote escopados dentro do terminal-inner */
+
+.terminal-inner {
+  font-family: "Fira Code", "JetBrains Mono", 'Courier New', monospace;
+  color: var(--foreground, #4EEE85);
+  background: color-mix(in srgb, var(--background, #000) 85%, transparent);
+  border-top-color: color-mix(in srgb, var(--accent, #4EEE85) 25%, transparent);
+}
+
+/* Cursor usando accent do tema */
+.terminal-cursor {
+  background: var(--foreground, #4EEE85);
+  box-shadow: 0 0 5px var(--foreground, #4EEE85);
+}
+
+/* Estilo terminal.css para elementos dentro do terminal-inner */
+#terminal-window .terminal-inner pre,
+#terminal-window .terminal-inner code {
+  font-family: "Fira Code", "JetBrains Mono", 'Courier New', monospace;
+  background: color-mix(in srgb, var(--foreground) 5%, transparent);
+  color: color-mix(in srgb, var(--foreground) 5%, var(--accent));
+  border: 1px solid color-mix(in srgb, var(--foreground) 25%, transparent);
+  border-radius: var(--radius);
+  padding: 0 6px;
+  font-size: 0.95em;
+}
+
+#terminal-window .terminal-inner a {
+  color: var(--accent);
+}
+
+/* hr no estilo terminal.css */
+#terminal-window .terminal-inner hr {
+  border: none;
+  background: var(--accent);
+  height: 2px;
+  width: 100%;
+}
+
+/* ─── Ajuste do text-shadow do #terminal-text ────────────────────── */
+/* Glow fósforo usando variável do tema */
+
+#terminal-text {
+  text-shadow:
+    0 0 5px var(--foreground, #4EEE85),
+    0 0 12px color-mix(in srgb, var(--foreground, #4EEE85) 45%, transparent);
+}
+
+/* ─── Overrides de estado: quando o estado muda a cor --win-* ─────── */
+/* Os estados (aggressive, patrol, many) redefinem --win-r/g/b em windows.css.
+   Aqui garantimos que os IDs de janela respondam às variáveis de estado
+   durante transições, fazendo fallback para --win-* quando não estamos
+   no estado padrão returns/watching/idle */
+
+.state-aggressive #terminal-window,
+.state-crimson    #terminal-window,
+.state-squinting  #terminal-window {
+  --accent:     rgba(220, 0, 0, 0.9);
+  --foreground: rgba(220, 0, 0, 0.85);
+  --background: #0a0000;
+}
+
+.state-patrol #terminal-window {
+  --accent:     rgba(245, 197, 24, 0.9);
+  --foreground: rgba(245, 197, 24, 0.85);
+  --background: #080600;
+}
+
+.state-many #terminal-window {
+  --accent:     rgba(130, 0, 220, 0.9);
+  --foreground: rgba(180, 80, 255, 0.85);
+  --background: #060010;
+}
+
+.state-aggressive #eye-window,
+.state-crimson    #eye-window,
+.state-squinting  #eye-window {
+  --accent:     rgba(220, 0, 0, 0.88);
+  --foreground: rgba(220, 0, 0, 0.72);
+}
+
+.state-patrol #eye-window {
+  --accent:     rgba(245, 197, 24, 0.88);
+  --foreground: rgba(245, 197, 24, 0.72);
+}
+
+.state-many #eye-window {
+  --accent:     rgba(130, 0, 220, 0.88);
+  --foreground: rgba(180, 80, 255, 0.72);
+}
+
+/* ─── Transição suave das variáveis de tema por estado ───────────── */
+
+#terminal-window,
+#eye-window {
+  transition:
+    border-color  0.28s ease,
+    box-shadow    0.28s ease;
+}
+
+/* Não é possível transicionar custom properties diretamente,
+   mas os elementos filhos que usam var() recebem a mudança
+   via transition: color/background/border-color nos seletores acima */
