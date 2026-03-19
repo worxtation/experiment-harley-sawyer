@@ -1,0 +1,167 @@
+/* =============================================
+   WINDOWS.CSS — Sistema de janelas do CRT OS
+   Camada de conteúdo: eye e terminal são janelas
+   exibidas na superfície do monitor, não o monitor.
+
+   Regra arquitetural:
+     monitor → crt-screen (efeitos físicos da tela)
+     janela  → crt-window  (chrome de software)
+   ============================================= */
+
+/* ─── Variável de cor por estado ─────────────────────────────────── */
+
+:root {
+  --win-r: 0;
+  --win-g: 229;
+  --win-b: 255;
+}
+
+.state-aggressive, .state-crimson, .state-squinting {
+  --win-r: 220; --win-g: 0; --win-b: 0;
+}
+.state-patrol {
+  --win-r: 245; --win-g: 197; --win-b: 24;
+}
+.state-many {
+  --win-r: 130; --win-g: 0; --win-b: 220;
+}
+
+/* ─── Janela base — inativa ──────────────────────────────────────── */
+
+.crt-window {
+  border: 1px solid rgba(var(--win-r), var(--win-g), var(--win-b), 0.18);
+  box-sizing: border-box;
+  transition:
+    box-shadow    0.28s ease,
+    border-color  0.28s ease;
+}
+
+/* ─── Janela ativa / selecionada ─────────────────────────────────── */
+
+.crt-window.window-active {
+  border-color: rgba(var(--win-r), var(--win-g), var(--win-b), 0.62);
+
+  /* Drop shadow CRT OS:
+     Hard offset sólido (estilo X11/twm) → ilusão de profundidade sem blur
+     Phosphor bloom → luz do fósforo vazando em torno da janela ativa */
+  box-shadow:
+    3px 3px 0 0 rgba(0, 0, 0, 0.88),
+    0 0 14px     rgba(var(--win-r), var(--win-g), var(--win-b), 0.22),
+    0 0 36px     rgba(var(--win-r), var(--win-g), var(--win-b), 0.10);
+}
+
+/* ─── Titlebar ───────────────────────────────────────────────────── */
+
+.crt-window-titlebar {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 3px 10px;
+  background: rgba(var(--win-r), var(--win-g), var(--win-b), 0.04);
+  border-bottom: 1px solid rgba(var(--win-r), var(--win-g), var(--win-b), 0.14);
+  font-family: 'Courier New', monospace;
+  font-size: 10px;
+  letter-spacing: 0.14em;
+  color: rgba(var(--win-r), var(--win-g), var(--win-b), 0.32);
+  user-select: none;
+  transition:
+    background    0.28s ease,
+    color         0.28s ease,
+    border-color  0.28s ease;
+}
+
+.crt-window.window-active .crt-window-titlebar {
+  background: rgba(var(--win-r), var(--win-g), var(--win-b), 0.08);
+  color: rgba(var(--win-r), var(--win-g), var(--win-b), 0.88);
+  text-shadow: 0 0 10px rgba(var(--win-r), var(--win-g), var(--win-b), 0.50);
+  border-bottom-color: rgba(var(--win-r), var(--win-g), var(--win-b), 0.35);
+}
+
+.crt-window-title {
+  flex: 1;
+  text-align: center;
+}
+
+/* ─── Badge de estado ────────────────────────────────────────────── */
+
+.crt-window-badge {
+  font-size: 9px;
+  letter-spacing: 0.06em;
+  color: rgba(var(--win-r), var(--win-g), var(--win-b), 0.30);
+  transition: color 0.28s ease, text-shadow 0.28s ease;
+}
+
+.crt-window.window-active .crt-window-badge {
+  color: rgba(var(--win-r), var(--win-g), var(--win-b), 0.92);
+  text-shadow: 0 0 8px rgba(var(--win-r), var(--win-g), var(--win-b), 0.65);
+  animation: win-badge-pulse 1.4s step-end infinite;
+}
+
+@keyframes win-badge-pulse {
+  0%, 100% { opacity: 1.0; }
+  50%       { opacity: 0.40; }
+}
+
+/* ─── Control dots (decorativos) ─────────────────────────────────── */
+
+.crt-win-controls {
+  display: flex;
+  gap: 4px;
+  flex-shrink: 0;
+}
+
+.crt-win-dot {
+  display: inline-block;
+  width: 5px;
+  height: 5px;
+  border: 1px solid rgba(var(--win-r), var(--win-g), var(--win-b), 0.25);
+  transition: border-color 0.28s ease, box-shadow 0.28s ease;
+}
+
+.crt-window.window-active .crt-win-dot {
+  border-color: rgba(var(--win-r), var(--win-g), var(--win-b), 0.65);
+  box-shadow: 0 0 4px rgba(var(--win-r), var(--win-g), var(--win-b), 0.40);
+}
+
+/* ─── Eye window — ocupa toda a tela CRT ────────────────────────── */
+
+/* O border de .crt-window aparece na borda da tela (inset:0),
+   criando um frame ao redor da área visível do monitor */
+
+#eye-window .crt-window-titlebar {
+  /* Posicionado absolutamente — não interfere no centering do SVG */
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  z-index: 11;
+}
+
+/* ─── Terminal window ─────────────────────────────────────────────── */
+
+/* Terminal herda posicionamento absoluto de .terminal-output
+   Reestruturado como flex-column para acomodar titlebar acima do conteúdo */
+
+.terminal-output {
+  display: flex;
+  flex-direction: column;
+  align-items: stretch;
+  padding: 0;
+  text-align: left;
+}
+
+.terminal-output .crt-window-titlebar {
+  flex-shrink: 0;
+}
+
+.terminal-output .terminal-inner {
+  /* Remove border própria — a janela tem seu border via .crt-window */
+  border: none;
+  border-top: 1px solid rgba(var(--win-r), var(--win-g), var(--win-b), 0.10);
+  border-radius: 0;
+  text-align: center;
+}
+
+.terminal-output.window-active .terminal-inner {
+  border-top-color: rgba(var(--win-r), var(--win-g), var(--win-b), 0.25);
+}
