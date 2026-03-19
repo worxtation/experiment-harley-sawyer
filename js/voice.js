@@ -336,16 +336,8 @@ const Voice = (() => {
     audio.addEventListener('ended', () => {
       _isPlaying = false;
       _audio = null;
-      // Fade do texto 1.5s após o áudio terminar
+      StateMachine.transitionTo('idle');
       setTimeout(() => Dialogue.fadeOut(), 1500);
-      // Retorna ao idle 2.5s após o áudio terminar
-      setTimeout(() => {
-        if (['aggressive', 'crimson', 'squinting', 'patrol',
-             'watching', 'amused', 'ethereal', 'narrowed',
-             'returns', 'shutdown'].includes(StateMachine.getState())) {
-          StateMachine.transitionTo('idle');
-        }
-      }, 2500);
     });
 
     audio.addEventListener('error', () => {
