@@ -57,9 +57,9 @@
       <div class="phosphor-glow"></div>
 
       <!-- Janela do olho — componente exibido na tela CRT -->
-      <div class="eye-container crt-window" id="eye-window">
+      <div class="crt-window" id="eye-window">
 
-        <!-- Chrome da janela: titlebar posicionado absolutamente no topo -->
+        <!-- Chrome da janela: titlebar -->
         <div class="crt-window-titlebar">
           <div class="crt-win-controls">
             <span class="crt-win-dot"></span>
@@ -69,6 +69,9 @@
           <span class="crt-window-title">OCULAR.FEED</span>
           <span class="crt-window-badge" id="eye-window-badge">IDLE</span>
         </div>
+
+        <!-- Corpo da janela: centering do SVG -->
+        <div class="eye-container">
 
         <svg id="eye-svg"
              viewBox="0 0 400 300"
@@ -394,27 +397,31 @@
           </g>
 
         </svg>
-      </div>
-      <!-- /eye-container -->
 
-      <!-- Terminal de diálogo -->
+        </div>
+        <!-- /eye-container -->
+
+      </div>
+      <!-- /eye-window -->
+
+      <!-- Janela de terminal — dentro do crt-screen (sofre filtros de estado) -->
+      <div class="terminal-output crt-window" id="terminal-window">
+        <!-- Chrome da janela: titlebar -->
+        <div class="crt-window-titlebar">
+          <div class="crt-win-controls">
+            <span class="crt-win-dot"></span>
+          </div>
+          <span class="crt-window-title">COMM.LINK</span>
+          <span class="crt-window-badge" id="terminal-window-badge">STANDBY</span>
+        </div>
+        <div class="terminal-inner">
+          <span id="terminal-text"></span><span class="terminal-cursor" id="terminal-cursor"></span>
+        </div>
+      </div>
+      <!-- /terminal-window -->
+
     </div>
     <!-- /crt-screen -->
-
-    <!-- Janela de terminal — fora do crt-screen (não sofre filtros de estado) -->
-    <div class="terminal-output crt-window" id="terminal-window">
-      <!-- Chrome da janela: titlebar -->
-      <div class="crt-window-titlebar">
-        <div class="crt-win-controls">
-          <span class="crt-win-dot"></span>
-        </div>
-        <span class="crt-window-title">COMM.LINK</span>
-        <span class="crt-window-badge" id="terminal-window-badge">STANDBY</span>
-      </div>
-      <div class="terminal-inner">
-        <span id="terminal-text"></span><span class="terminal-cursor" id="terminal-cursor"></span>
-      </div>
-    </div>
 
   </main>
   <!-- /crt-scanlines -->
