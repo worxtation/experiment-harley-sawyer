@@ -20,8 +20,6 @@ document.addEventListener('DOMContentLoaded', () => {
   // Janelas do CRT OS
   const eyeWindow      = document.getElementById('eye-window');
   const eyeBadge       = document.getElementById('eye-window-badge');
-  const terminalWindow = document.getElementById('terminal-window');
-  const terminalBadge  = document.getElementById('terminal-window-badge');
 
   // Labels de estado para o badge da janela do olho
   const EYE_STATE_LABELS = {
@@ -95,7 +93,7 @@ document.addEventListener('DOMContentLoaded', () => {
       Audio.init();
       audioInitialized = true;
     }
-  }, { once: false });
+  });
 
   // =============================================
   // Diálogos por estado
@@ -191,22 +189,9 @@ document.addEventListener('DOMContentLoaded', () => {
 
     dialogueTimer = setTimeout(() => {
       if (StateMachine.getState() === state) {
-        if (['many', 'bared'].includes(state)) {
-          Dialogue.typeGlitched(getRandomPhrase(state));
-        } else {
-          Dialogue.sayForState(state);
-        }
+        Dialogue.sayForState(state);
       }
     }, delay);
-  }
-
-  function getRandomPhrase(state) {
-    const phrases = {
-      many:  ['S̷I̴N̵A̷L̸ ̸P̷E̴R̸D̵I̷D̴O̸', '[ERRO: ESTADO INVÁLIDO]', 'E̷R̸R̷O̸ ̷D̸E̸ ̷C̵O̷N̸E̷X̷Ã̷O̸', '//KERNEL_FAULT//'],
-      bared: ['...', 'Você encontrou algo que não deveria existir.'],
-    };
-    const list = phrases[state] || ['...'];
-    return list[Math.floor(Math.random() * list.length)];
   }
 
   // =============================================
