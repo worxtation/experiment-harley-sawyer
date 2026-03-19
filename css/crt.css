@@ -10,7 +10,7 @@
 }
 
 :root {
-  --bg-main: #050518;
+  --bg-main: #07050f;
   --glow-cyan: #00E5FF;
   --aberration-cyan: #00FFEE;
   --aberration-red: #FF2222;
@@ -27,7 +27,7 @@
 html, body {
   width: 100%;
   height: 100%;
-  background: #000;
+  background: #04030a;
   overflow: hidden;
   font-family: 'Courier New', monospace;
   cursor: none;
@@ -47,7 +47,8 @@ main.crt-scanlines {
 }
 
 /* Scanlines estáticas — grade de linhas horizontais
-   Mesmo padrão do CodePen: linear-gradient 50/50 em 4px */
+   Mesmo padrão do CodePen: linear-gradient 50/50 em 4px
+   + jitter ocasional de sinal para instabilidade analógica */
 main.crt-scanlines::before {
   content: '';
   position: absolute;
@@ -58,17 +59,28 @@ main.crt-scanlines::before {
   background:
     linear-gradient(
       rgba(0, 0, 0, 0) 50%,
-      rgba(0, 0, 0, 0.25) 50%
+      rgba(0, 0, 0, 0.35) 50%
     );
   background-size: 100% 4px;
   pointer-events: none;
   z-index: 50;
-  animation: scanlines-drift 20s linear infinite;
+  animation:
+    scanlines-drift 16s linear infinite,
+    scanline-jitter 11s steps(1) infinite;
 }
 
 @keyframes scanlines-drift {
   0%   { background-position: 0 0; }
   100% { background-position: 0 100px; }
+}
+
+/* Jitter horizontal sutil — simula instabilidade do sinal analógico */
+@keyframes scanline-jitter {
+  0%,   96%,  100% { transform: translateX(0); }
+  96.3%             { transform: translateX(-2px); }
+  96.7%             { transform: translateX(2px); }
+  97%               { transform: translateX(-1px); }
+  97.5%             { transform: translateX(0); }
 }
 
 /* Scan beam — faixa de luz varrendo a tela de cima para baixo
@@ -110,7 +122,8 @@ main.crt-scanlines::after {
   overflow: hidden;
 }
 
-/* Vignette — barrel distortion simulado + reflexo interno de vidro */
+/* Vignette — barrel distortion simulado + reflexo interno de vidro
+   Usa preto purple-contaminado (não puro) nas bordas — crítico para CRT convincente */
 .crt-screen::before {
   content: '';
   position: absolute;
@@ -119,12 +132,12 @@ main.crt-scanlines::after {
   width: 100%;
   height: 100%;
   background:
-    /* Barrel distortion: escurece cantos, centro limpo */
+    /* Barrel distortion: escurece cantos com purple-black, centro limpo */
     radial-gradient(ellipse 100% 100% at 50% 50%,
-      transparent            40%,
-      rgba(0, 0, 0, 0.12)   62%,
-      rgba(0, 0, 0, 0.48)   82%,
-      rgba(0, 0, 0, 0.82)  100%
+      transparent             30%,
+      rgba(6, 3, 18, 0.15)   52%,
+      rgba(5, 2, 15, 0.58)   78%,
+      rgba(4, 2, 12, 0.92)  100%
     ),
     /* Reflexo de vidro no topo — glare sutil */
     linear-gradient(
@@ -137,14 +150,17 @@ main.crt-scanlines::after {
   z-index: 20;
 }
 
-/* Scanlines de estado — overrides do glitch.css (watching, narrowed)
-   Base vazio aqui; os estados adicionam os seus próprios efeitos */
+/* Rim glow purple-violet — permanente, estados adicionam background de scanlines por cima
+   box-shadow não entra em conflito com o background dos estados */
 .crt-screen::after {
   content: '';
   position: absolute;
   inset: 0;
   pointer-events: none;
   z-index: 21;
+  box-shadow:
+    inset 0 0  50px rgba(18,  7, 50, 0.22),
+    inset 0 0 110px rgba(10,  4, 30, 0.30);
 }
 
 /* =============================================
@@ -156,7 +172,7 @@ main.crt-scanlines::after {
   inset: 0;
   width: 100%;
   height: 100%;
-  opacity: 0.38;
+  opacity: 0.26;
   z-index: 5;
   pointer-events: none;
   mix-blend-mode: screen;
@@ -193,6 +209,65 @@ main.crt-scanlines::after {
 .glitch-layer-2 { z-index: 13; }
 
 /* =============================================
+   PHOSPHOR GLOW AMBIENTE — por baixo do olho
+   Glow separado do SVG: sem box dura, muda por estado
+   ============================================= */
+
+.phosphor-glow {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  z-index: 9;
+  background: radial-gradient(ellipse 52% 46% at 50% 50%,
+    rgba(0, 229, 255, 0.09) 0%,
+    rgba(0, 229, 255, 0.04) 48%,
+    transparent 72%
+  );
+  transition: background 0.6s ease, opacity 0.6s ease;
+}
+
+.eye-glow-active .phosphor-glow {
+  background: radial-gradient(ellipse 52% 46% at 50% 50%,
+    rgba(0, 229, 255, 0.20) 0%,
+    rgba(0, 229, 255, 0.09) 42%,
+    rgba(0, 229, 255, 0.02) 68%,
+    transparent 82%
+  );
+}
+
+.state-aggressive .phosphor-glow {
+  background: radial-gradient(ellipse 52% 46% at 50% 50%,
+    rgba(204, 0, 0, 0.28) 0%,
+    rgba(204, 0, 0, 0.10) 48%,
+    transparent 72%
+  );
+}
+
+.state-crimson .phosphor-glow {
+  background: radial-gradient(ellipse 52% 46% at 50% 50%,
+    rgba(139, 0, 0, 0.20) 0%,
+    rgba(139, 0, 0, 0.06) 52%,
+    transparent 74%
+  );
+}
+
+.state-patrol .phosphor-glow {
+  background: radial-gradient(ellipse 52% 46% at 50% 50%,
+    rgba(245, 197, 24, 0.16) 0%,
+    rgba(245, 197, 24, 0.05) 50%,
+    transparent 72%
+  );
+}
+
+.state-many .phosphor-glow {
+  background: radial-gradient(ellipse 52% 46% at 50% 50%,
+    rgba(102, 0, 187, 0.22) 0%,
+    rgba(102, 0, 187, 0.07) 50%,
+    transparent 72%
+  );
+}
+
+/* =============================================
    CONTAINER DO OLHO SVG
    ============================================= */
 
@@ -208,17 +283,33 @@ main.crt-scanlines::after {
 #eye-svg {
   width: min(92vw, 148vh);
   height: min(69vh, 111vw);
-  filter:
-    drop-shadow(0 0 5px rgba(0, 229, 255, 0.45))
-    drop-shadow(0 0 16px rgba(0, 229, 255, 0.22));
-  transition: filter 0.5s ease;
+  /* Sem drop-shadow no elemento — o glow vem do phosphor-glow abaixo
+     e dos filtros SVG internos (sclera #glow, highlights). */
+
+  /* Máscara radial suave — o olho flutua, sem box dura
+     O fundo da tela (noise, grain) aparece nas bordas */
+  mask-image: radial-gradient(ellipse 78% 72% at 50% 50%,
+    black 28%,
+    rgba(0,0,0,0.95) 42%,
+    rgba(0,0,0,0.75) 56%,
+    rgba(0,0,0,0.40) 70%,
+    rgba(0,0,0,0.10) 82%,
+    transparent 93%
+  );
+  -webkit-mask-image: radial-gradient(ellipse 78% 72% at 50% 50%,
+    black 28%,
+    rgba(0,0,0,0.95) 42%,
+    rgba(0,0,0,0.75) 56%,
+    rgba(0,0,0,0.40) 70%,
+    rgba(0,0,0,0.10) 82%,
+    transparent 93%
+  );
+  transition: opacity 0.5s ease;
 }
 
+/* Nos estados intensos o olho fica ligeiramente maior (percepção) */
 .eye-glow-active #eye-svg {
-  filter:
-    drop-shadow(0 0 8px rgba(0, 229, 255, 0.85))
-    drop-shadow(0 0 28px rgba(0, 229, 255, 0.52))
-    drop-shadow(0 0 65px rgba(0, 229, 255, 0.25));
+  opacity: 1;
 }
 
 /* =============================================
@@ -227,12 +318,13 @@ main.crt-scanlines::after {
 
 .terminal-output {
   position: absolute;
-  bottom: 20px;
+  bottom: 28px;
   left: 50%;
   transform: translateX(-50%);
   width: 72%;
   text-align: center;
-  z-index: 22;
+  /* z-index > 51 (scan beam) — terminal sempre verde, fora do filter de estado */
+  z-index: 60;
   pointer-events: none;
   min-height: 2em;
 }
