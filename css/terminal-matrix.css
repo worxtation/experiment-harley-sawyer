@@ -36,8 +36,8 @@
 
 #eye-window {
   --background: transparent;
-  --foreground: rgba(0, 229, 255, 0.72);
-  --accent:     rgba(0, 229, 255, 0.88);
+  --foreground: #00E5FF;
+  --accent:     #00E5FF;
   --font-size:  10px;
   --line-height: var(--terminal-line-height);
   --radius:     var(--terminal-radius);
@@ -216,18 +216,18 @@
 .state-aggressive #eye-window,
 .state-crimson    #eye-window,
 .state-squinting  #eye-window {
-  --accent:     rgba(220, 0, 0, 0.88);
-  --foreground: rgba(220, 0, 0, 0.72);
+  --accent:     #DC0000;
+  --foreground: #DC0000;
 }
 
 .state-patrol #eye-window {
-  --accent:     rgba(245, 197, 24, 0.88);
-  --foreground: rgba(245, 197, 24, 0.72);
+  --accent:     #F5C518;
+  --foreground: #F5C518;
 }
 
 .state-many #eye-window {
-  --accent:     rgba(130, 0, 220, 0.88);
-  --foreground: rgba(180, 80, 255, 0.72);
+  --accent:     #8200DC;
+  --foreground: #B450FF;
 }
 
 /* ─── Transição suave das variáveis de tema por estado ───────────── */
