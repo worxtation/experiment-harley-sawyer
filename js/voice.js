@@ -324,6 +324,7 @@ const Voice = (() => {
     // Para qualquer texto atual e muda o estado do olho
     Dialogue.stopCurrent();
     StateMachine.transitionTo(line.state, false);
+    Eye.glanceAtTerminal(); // olha para o terminal enquanto fala
 
     // Exibe o texto do diálogo enquanto o áudio toca
     Dialogue.typeText(line.text, line.state);

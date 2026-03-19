@@ -17,14 +17,41 @@ const Eye = (() => {
   let currentState = 'idle';
 
   // Mouse tracking
-  let mouseTarget = { x: 0.5, y: 0.5 };
-  let pupilPos    = { x: 0.5, y: 0.5 };
+  let mouseTarget   = { x: 0.5, y: 0.5 };
+  let pupilPos      = { x: 0.5, y: 0.5 };
+  let mouseOnScreen = false;
+
+  // Gaze autônomo — usado quando o mouse não está na tela
+  let gazeTarget    = { x: 0.5, y: 0.5 };
+  let gazeTimer     = null;
+  let gazeResetTimer = null;
+
+  /*
+   * NLP_GAZE — direções de olhar baseadas no modelo clássico de PNL
+   * Cada posição é normalizada (0-1) relativa ao SVG
+   *
+   *   visual-memory     (cima-esq)  — lembrando imagens / registros visuais passados
+   *   visual-construct  (cima-dir)  — imaginando / construindo imagens novas
+   *   auditory-memory   (esq)       — lembrando sons / vozes / músicas
+   *   auditory-construct(dir)       — criando sons / imaginando novos
+   *   internal-dialogue (baixo-esq) — diálogo interno / pensando consigo mesmo
+   *   feelings          (baixo-dir) — sentimentos / sensações corporais
+   */
+  const NLP_GAZE = [
+    { x: 0.22, y: 0.18 }, // cima-esq  — memória visual
+    { x: 0.78, y: 0.18 }, // cima-dir  — construção visual
+    { x: 0.08, y: 0.50 }, // esq       — memória auditiva
+    { x: 0.92, y: 0.50 }, // dir       — construção auditiva
+    { x: 0.22, y: 0.82 }, // baixo-esq — diálogo interno
+    { x: 0.78, y: 0.82 }, // baixo-dir — sentimentos
+  ];
+  const GAZE_TERMINAL = { x: 0.50, y: 0.90 }; // terminal — baixo-centro
+  const GAZE_CENTER   = { x: 0.50, y: 0.50 }; // olhar neutro / centralizado
 
   // Drift orgânico — movimento natural quando o mouse para
   let lastMouseMoveTime = Date.now();
   let driftPhase = Math.random() * Math.PI * 2; // fase inicial aleatória
   let driftX = 0, driftY = 0;
-  let driftNoiseX = 0, driftNoiseY = 0;
   const DRIFT_IDLE_THRESHOLD = 1800; // ms parado antes de começar drift
 
   // Piscada
@@ -145,9 +172,12 @@ const Eye = (() => {
     patrolClaws      = svg.querySelector('#patrol-claws');
 
     document.addEventListener('mousemove', onMouseMove);
+    document.addEventListener('mouseleave', onMouseLeave);
+    document.addEventListener('mouseenter', onMouseEnter);
 
     initManyEyes();
     scheduleBlink();
+    scheduleGlance(); // inicia gaze autônomo (mouse ainda não entrou na tela)
     requestAnimationFrame(updatePupil);
   }
 
@@ -175,13 +205,71 @@ const Eye = (() => {
   }
 
   function onMouseMove(e) {
+    mouseOnScreen = true;
     const rect = svg.getBoundingClientRect();
     mouseTarget.x = Math.max(0, Math.min(1, (e.clientX - rect.left) / rect.width));
     mouseTarget.y = Math.max(0, Math.min(1, (e.clientY - rect.top)  / rect.height));
     lastMouseMoveTime = Date.now();
-    // Zera drift suavemente quando o mouse volta a mover
     driftX = 0;
     driftY = 0;
+  }
+
+  function onMouseEnter() {
+    mouseOnScreen = true;
+    clearTimeout(gazeTimer);
+    clearTimeout(gazeResetTimer);
+  }
+
+  function onMouseLeave() {
+    mouseOnScreen = false;
+    gazeTarget.x = GAZE_CENTER.x;
+    gazeTarget.y = GAZE_CENTER.y;
+    scheduleGlance();
+  }
+
+  // ── Gaze autônomo (mouse fora da tela) ──────────────────────────────
+
+  function scheduleGlance() {
+    clearTimeout(gazeTimer);
+    if (mouseOnScreen) return;
+
+    // Intervalo entre saccades: 4–12s
+    const delay = 4000 + Math.random() * 8000;
+    gazeTimer = setTimeout(() => {
+      if (mouseOnScreen) return;
+
+      // Escolhe direção PNL aleatória
+      const pos = NLP_GAZE[Math.floor(Math.random() * NLP_GAZE.length)];
+      gazeTarget.x = pos.x;
+      gazeTarget.y = pos.y;
+
+      // Mantém o olhar por 1.2–3.5s e retorna ao centro
+      const holdTime = 1200 + Math.random() * 2300;
+      gazeResetTimer = setTimeout(() => {
+        if (!mouseOnScreen) {
+          gazeTarget.x = GAZE_CENTER.x;
+          gazeTarget.y = GAZE_CENTER.y;
+        }
+        scheduleGlance();
+      }, holdTime);
+    }, delay);
+  }
+
+  // Olha para o terminal — chamado externamente quando uma fala começa
+  function glanceAtTerminal() {
+    if (mouseOnScreen) return;
+    clearTimeout(gazeTimer);
+    clearTimeout(gazeResetTimer);
+    gazeTarget.x = GAZE_TERMINAL.x;
+    gazeTarget.y = GAZE_TERMINAL.y;
+    // Retorna ao centro ~3s depois e retoma agenda de glances
+    gazeResetTimer = setTimeout(() => {
+      if (!mouseOnScreen) {
+        gazeTarget.x = GAZE_CENTER.x;
+        gazeTarget.y = GAZE_CENTER.y;
+        scheduleGlance();
+      }
+    }, 3000);
   }
 
   function updatePupil() {
@@ -209,9 +297,11 @@ const Eye = (() => {
       driftY = lerp(driftY, 0, 0.08);
     }
 
-    // Alvo final = posição do mouse + drift orgânico
-    const finalTargetX = mouseTarget.x + driftX;
-    const finalTargetY = mouseTarget.y + driftY;
+    // Alvo final = mouse (se presente) ou gaze autônomo + drift orgânico
+    const baseX = mouseOnScreen ? mouseTarget.x : gazeTarget.x;
+    const baseY = mouseOnScreen ? mouseTarget.y : gazeTarget.y;
+    const finalTargetX = baseX + driftX;
+    const finalTargetY = baseY + driftY;
 
     // Spring feel — lerp mais lento para movimento orgânico
     const speed = currentState === 'patrol' ? 0.12 : 0.07;
@@ -394,5 +484,5 @@ const Eye = (() => {
     clearTimeout(blinkTimer);
   }
 
-  return { init, applyState, blink, scheduleBlink, cancelBlink };
+  return { init, applyState, blink, scheduleBlink, cancelBlink, glanceAtTerminal };
 })();
