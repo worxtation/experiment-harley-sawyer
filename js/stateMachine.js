@@ -36,9 +36,15 @@ const StateMachine = (() => {
   function init(callback) {
     onStateChange = callback;
 
-    // Event listeners
-    document.addEventListener('click', handleClick);
-    document.addEventListener('mousemove', handleMouseMove);
+    const eyeWindow = document.getElementById('eye-window');
+
+    // Interações restritas à janela do olho
+    if (eyeWindow) {
+      eyeWindow.addEventListener('click', handleClick);
+      eyeWindow.addEventListener('mousemove', handleMouseMove);
+    }
+
+    // Visibilidade e foco são eventos de página — sem restrição de área
     document.addEventListener('visibilitychange', handleVisibility);
     window.addEventListener('focus', handleFocus);
     window.addEventListener('blur', handleBlur);
@@ -234,13 +240,15 @@ const StateMachine = (() => {
       }
     }
 
-    // WATCHING: mouse parado no centro por 3s
-    const screenCX = window.innerWidth / 2;
-    const screenCY = window.innerHeight / 2;
+    // WATCHING: mouse parado no centro da eye-window por 3s
+    const eyeWindow = document.getElementById('eye-window');
+    const rect = eyeWindow ? eyeWindow.getBoundingClientRect() : { left: 0, top: 0, width: window.innerWidth, height: window.innerHeight };
+    const screenCX = rect.left + rect.width  / 2;
+    const screenCY = rect.top  + rect.height / 2;
     const centerDist = Math.sqrt(
       (e.clientX - screenCX) ** 2 + (e.clientY - screenCY) ** 2
     );
-    const centerThreshold = Math.min(window.innerWidth, window.innerHeight) * 0.15;
+    const centerThreshold = Math.min(rect.width, rect.height) * 0.15;
 
     if (centerDist < centerThreshold) {
       if (!['aggressive', 'bared', 'many', 'shutdown', 'patrol'].includes(currentState)) {
