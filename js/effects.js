@@ -12,9 +12,10 @@ const Effects = (() => {
   let glitchActive = false;
   let glitchTimer = null;
   let animFrame;
-  let currentNoiseIntensity = 0.38;
+  let currentNoiseIntensity = 0.30;
 
   function initNoise(canvasEl) {
+    if (!canvasEl) return;
     noiseCanvas = canvasEl;
     noiseCtx = canvasEl.getContext('2d');
     resizeNoise();
@@ -29,6 +30,7 @@ const Effects = (() => {
   }
 
   function initGlitch(canvasEl) {
+    if (!canvasEl) return;
     glitchCanvas = canvasEl;
     glitchCtx = canvasEl.getContext('2d');
     resizeGlitch();
@@ -45,21 +47,25 @@ const Effects = (() => {
     currentNoiseIntensity = Math.max(0.1, Math.min(0.8, v));
   }
 
-  // Gera um frame de grain azulado no canvas de noise
+  // Gera um frame de grain com paleta purple-blue do fósforo CRT
   // Usa Uint32Array — 4x mais rápido que escrever RGBA individualmente
+  // Paleta segue prompt-aprimoraments.md: R baixo, G mínimo, B dominante
   function renderNoise(intensity = 0.35) {
     if (!noiseCtx) return;
     const w = noiseCanvas.width;
     const h = noiseCanvas.height;
+    if (w === 0 || h === 0) { resizeNoise(); return; }
     const imageData = noiseCtx.createImageData(w, h);
     const buf = new Uint32Array(imageData.data.buffer);
     const len = buf.length;
 
     for (let i = 0; i < len; i++) {
-      const v   = (Math.random() * 255 * intensity) | 0;
-      const a   = (Math.random() * 180)             | 0;
-      const r   = (v * 0.2) | 0;
-      const g   = (v * 0.3) | 0;
+      const v = (Math.random() * 255 * intensity) | 0;
+      const a = (Math.random() * 160)             | 0;
+      // Purple-blue: R leve, G mínimo, B dominante
+      // Aproxima paleta: (5-15, 0-10, 20-40) do fósforo real
+      const r = (v * 0.28) | 0;
+      const g = (v * 0.12) | 0;
       // little-endian: uint32 → bytes [R, G, B, A]
       buf[i] = (a << 24) | (v << 16) | (g << 8) | r;
     }
