@@ -120,6 +120,25 @@ Use these as tonal anchors depending on the conversational situation:
 
 ---
 
+## Timing & Silence Rules
+
+O personagem não é apressado. O silêncio é uma ferramenta.
+
+| Frase | Tempo na tela antes de sumir |
+|-------|------------------------------|
+| `'...'` `'Ha.'` `'Ah.'` (≤3 chars) | 7–12 segundos |
+| `'Pare.'` `'Curioso.'` (≤8 chars) | 5–8.5 segundos |
+| `'Não se mova.'` (≤18 chars) | 3.5–6 segundos |
+| Frases médias | 2.5–4.5 segundos |
+| Frases longas | 2–3.5 segundos |
+
+Velocidade de digitação:
+- **Default**: 70–170ms por caractere (deliberado, britânico)
+- **AGGRESSIVE**: 16–38ms por caractere (urgência, máscara caindo)
+- **SQUINTING/CRIMSON**: 55–125ms (controlado mas tenso)
+
+---
+
 ## Response Length Guidelines
 
 | Situation | Length |

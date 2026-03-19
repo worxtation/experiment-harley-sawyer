@@ -50,11 +50,11 @@ document.addEventListener('DOMContentLoaded', () => {
   // Inicializa módulos
   // =============================================
 
-  Effects.initNoise(noiseCanvas);
-  Effects.initGlitch(glitchCanvas);
-  Effects.startLoop();
+  try { Effects.initNoise(noiseCanvas); } catch(e) { console.error('[Effects.initNoise]', e); }
+  try { Effects.initGlitch(glitchCanvas); } catch(e) { console.error('[Effects.initGlitch]', e); }
+  try { Effects.startLoop(); } catch(e) { console.error('[Effects.startLoop]', e); }
 
-  Eye.init(eyeSvg);
+  try { Eye.init(eyeSvg); } catch(e) { console.error('[Eye.init]', e); }
 
   Dialogue.init(terminalOut, terminalCursor);
 
@@ -66,6 +66,12 @@ document.addEventListener('DOMContentLoaded', () => {
       audioInitialized = true;
     }
   }, { once: false });
+
+  // =============================================
+  // Diálogos por estado
+  // =============================================
+
+  let dialogueTimer = null;
 
   // =============================================
   // Inicializa state machine com callback
@@ -120,12 +126,6 @@ document.addEventListener('DOMContentLoaded', () => {
     Effects.setNoiseIntensity(noiseIntensity);
   });
 
-  // =============================================
-  // Diálogos por estado
-  // =============================================
-
-  let dialogueTimer = null;
-
   function handleDialogue(state, prev) {
     clearTimeout(dialogueTimer);
 
@@ -173,6 +173,27 @@ document.addEventListener('DOMContentLoaded', () => {
     const list = phrases[state] || ['...'];
     return list[Math.floor(Math.random() * list.length)];
   }
+
+  // =============================================
+  // Glitch espontâneo — monitor falhando
+  // Aparece aleatoriamente a cada 20–30s independente de interação
+  // =============================================
+
+  function scheduleRandomGlitch() {
+    const delay = 20000 + Math.random() * 10000;
+    setTimeout(() => {
+      const state = StateMachine.getState();
+      // Mais dramático em estados calmos — o monitor falha sozinho
+      if (!['aggressive', 'many', 'bared', 'shutdown'].includes(state)) {
+        Effects.triggerGlitch(
+          60 + Math.random() * 140,
+          0.25 + Math.random() * 0.30
+        );
+      }
+      scheduleRandomGlitch();
+    }, delay);
+  }
+  scheduleRandomGlitch();
 
   // =============================================
   // Frase aleatória periódica no IDLE

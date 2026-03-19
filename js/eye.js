@@ -8,6 +8,7 @@ const Eye = (() => {
   // Elementos SVG
   let svg, eyelidTop, eyelidBottom, eyelidTopFill, eyelidBottomFill;
   let sclera, iris, pupil, pupilSecondary, highlightCyan, highlightRed;
+  let irisPupilGroup;
   let eyeShape, eyeClip;
   let ringsGroup, marksGroup;
   let manyGroup, aggressiveCorona, baredTeeth, patrolClaws;
@@ -17,6 +18,13 @@ const Eye = (() => {
   // Mouse tracking
   let mouseTarget = { x: 0.5, y: 0.5 };
   let pupilPos    = { x: 0.5, y: 0.5 };
+
+  // Drift orgânico — movimento natural quando o mouse para
+  let lastMouseMoveTime = Date.now();
+  let driftPhase = Math.random() * Math.PI * 2; // fase inicial aleatória
+  let driftX = 0, driftY = 0;
+  let driftNoiseX = 0, driftNoiseY = 0;
+  const DRIFT_IDLE_THRESHOLD = 1800; // ms parado antes de começar drift
 
   // Piscada
   let blinkTimer = null;
@@ -66,6 +74,7 @@ const Eye = (() => {
     eyelidBottom     = svg.querySelector('#eyelid-bottom');
     eyelidTopFill    = svg.querySelector('#eyelid-top-fill');
     eyelidBottomFill = svg.querySelector('#eyelid-bottom-fill');
+    irisPupilGroup   = svg.querySelector('#iris-pupil-group');
     eyeShape         = svg.querySelector('#eye-shape');
     eyeClip          = svg.querySelector('#eye-clip-path');
     sclera           = svg.querySelector('#sclera');
@@ -91,13 +100,45 @@ const Eye = (() => {
     const rect = svg.getBoundingClientRect();
     mouseTarget.x = Math.max(0, Math.min(1, (e.clientX - rect.left) / rect.width));
     mouseTarget.y = Math.max(0, Math.min(1, (e.clientY - rect.top)  / rect.height));
+    lastMouseMoveTime = Date.now();
+    // Zera drift suavemente quando o mouse volta a mover
+    driftX = 0;
+    driftY = 0;
   }
 
   function updatePupil() {
+    const now = Date.now();
+    const mouseIdleMs = now - lastMouseMoveTime;
+
+    // Drift orgânico — ativa após DRIFT_IDLE_THRESHOLD ms parado
+    if (mouseIdleMs > DRIFT_IDLE_THRESHOLD) {
+      const t = now * 0.001; // tempo em segundos
+      driftPhase += 0.004;   // fase avança lentamente
+
+      // Ruído suave: dois senos com frequências ligeiramente diferentes
+      // cria movimento de Lissajous que nunca se repete exatamente
+      const targetDriftX = Math.sin(t * 0.31 + driftPhase) * 0.028
+                         + Math.sin(t * 0.17) * 0.012;
+      const targetDriftY = Math.sin(t * 0.23 + driftPhase * 1.3) * 0.020
+                         + Math.sin(t * 0.11) * 0.009;
+
+      // Lerp suave do drift — transição gradual, não pula
+      driftX = lerp(driftX, targetDriftX, 0.025);
+      driftY = lerp(driftY, targetDriftY, 0.025);
+    } else {
+      // Mouse movendo: dissolve o drift
+      driftX = lerp(driftX, 0, 0.08);
+      driftY = lerp(driftY, 0, 0.08);
+    }
+
+    // Alvo final = posição do mouse + drift orgânico
+    const finalTargetX = mouseTarget.x + driftX;
+    const finalTargetY = mouseTarget.y + driftY;
+
     // Spring feel — lerp mais lento para movimento orgânico
     const speed = currentState === 'patrol' ? 0.12 : 0.07;
-    pupilPos.x = lerp(pupilPos.x, mouseTarget.x, speed);
-    pupilPos.y = lerp(pupilPos.y, mouseTarget.y, speed);
+    pupilPos.x = lerp(pupilPos.x, finalTargetX, speed);
+    pupilPos.y = lerp(pupilPos.y, finalTargetY, speed);
 
     if (!pupil) {
       requestAnimationFrame(updatePupil);
@@ -109,26 +150,10 @@ const Eye = (() => {
 
     const ox = (pupilPos.x - 0.5) * 2 * maxOffset;
     const oy = (pupilPos.y - 0.5) * 2 * maxOffset;
-    const px = CX + ox;
-    const py = CY + oy;
 
-    pupil.setAttribute('cx', px);
-    pupil.setAttribute('cy', py);
-
-    // Highlights seguem a pupila
-    if (highlightCyan) {
-      highlightCyan.setAttribute('cx', px - 8);
-      highlightCyan.setAttribute('cy', py - 10);
-    }
-    if (highlightRed) {
-      highlightRed.setAttribute('cx', px - 4);
-      highlightRed.setAttribute('cy', py - 7);
-    }
-
-    // Pupila dupla (PATROL) — acompanha junto
-    if (pupilSecondary && pupilSecondary.style.display !== 'none') {
-      pupilSecondary.setAttribute('cx', px + 16);
-      pupilSecondary.setAttribute('cy', py);
+    // Move o grupo íris+pupila inteiro — íris e pupila se movem como uma unidade
+    if (irisPupilGroup) {
+      irisPupilGroup.setAttribute('transform', `translate(${ox.toFixed(2)}, ${oy.toFixed(2)})`);
     }
 
     requestAnimationFrame(updatePupil);
@@ -262,9 +287,14 @@ const Eye = (() => {
       eyeClip.setAttribute('d', eyeShapePath(CY + 4, p.botY));
     }
 
-    // Abre após 110–170ms
+    // Abre após 110–170ms — com pequeno drift de posição pós-piscada
     setTimeout(() => {
       applyState(currentState);
+      // Micro-ajuste orgânico após piscar: a íris não volta exatamente ao mesmo lugar
+      const jitterX = (Math.random() - 0.5) * 0.018;
+      const jitterY = (Math.random() - 0.5) * 0.014;
+      driftX += jitterX;
+      driftY += jitterY;
       scheduleBlink();
     }, 110 + Math.random() * 60);
   }
