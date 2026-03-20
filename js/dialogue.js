@@ -1,6 +1,7 @@
 /* =============================================
    DIALOGUE.JS — Sistema de texto terminal
-   Voz: Dr. Harley Sawyer — calmo, britânico, manipulador, nunca apressado
+   Voz: Dr. Harley Sawyer — pensamentos internos, anotações clínicas,
+   monólogo frio. Frases sem áudio são pensamento — nunca fala direta.
    ============================================= */
 
 'use strict';
@@ -23,81 +24,80 @@ const Dialogue = (() => {
   const PHRASES = {
 
     idle: [
-      // Silêncio e observação — o estado padrão é ele te estudando
+      // Notas mentais passivas — observação clínica em repouso
       '...',
-      'Interessante.',
-      'Você ainda está aí.',
-      'Eu consigo te ver.',
-      'Continue.',
-      'Estou observando.',
-      'Você não percebe, não é.',
+      'Nota: ainda presente.',
+      'Padrão consistente.',
+      'Noto.',
+      'Catalogando.',
       '[ ... ]',
+      'Curioso o que o mantém aqui.',
+      'Sem alterações. Por ora.',
+      'Arquivo em aberto.',
     ],
 
     watching: [
-      // Ele notou algo — foco máximo, mas ainda controlado
-      'Não se mova.',
-      'Continue assim.',
-      'Eu vejo tudo.',
-      'Seja quieto.',
-      'Fique onde está.',
-      'Fascinante.',
-      'Sim. Assim.',
+      // Foco máximo — anotação clínica interna, não interpelação
+      'Ali. Encontrado.',
+      'Confirmo minha hipótese.',
+      'Analisando.',
+      'Fascinante. Muito fascinante.',
+      'Comportamento relevante.',
+      'Guardo isso.',
+      'Movimento detectado. Registrado.',
     ],
 
     amused: [
-      // A máscara está no lugar mas ele está rindo de você
-      // Tom canônico do personagem — condescendência britânica
-      'Bem... isso é um desenvolvimento bastante interessante.',
-      'Você realmente achou que poderia me surpreender?',
+      // Comentário interno sardônico — ele ri para si, não para você
+      'Previsível até o fim.',
+      'Delicioso.',
+      'Ingênuo. Completamente ingênuo.',
+      'Ah. Claro.',
+      'A ironia não me escapa.',
+      'Exatamente como eu esperava.',
       'Ha.',
-      'Parabéns. Você falhou de um jeito novo.',
-      'Previsível.',
-      'Ah.',
-      'Como esperado.',
     ],
 
     patrol: [
-      // Ele está procurando — mas não anuncia sistemas. Ele ameaça.
-      'Onde você foi?',
-      'Eu te encontrarei.',
-      'Não há onde se esconder aqui.',
-      'Eu noto tudo.',
+      // Caçador calculando — pensamentos de busca, não ameaças ditas
+      'Por onde foi.',
+      'Rastreando.',
+      'Não muito longe, imagino.',
+      'Encontrarei. Sempre encontro.',
+      'Há algo fora do lugar.',
+      'Interessante rota.',
       'Curioso.',
-      'Não tente isso.',
-      'Ainda aqui.',
     ],
 
     squinting: [
-      // Primeiro aviso — curto, direto, sem calor
-      'Cuidado.',
-      'Isso foi desnecessário.',
-      'Pense melhor.',
+      // Irritação contida — nota interna de aviso a si mesmo
+      'Irritante.',
+      'Isso foi um erro.',
+      'Recalibrando.',
       'Não.',
-      'Pare.',
+      'Limite próximo.',
     ],
 
     crimson: [
-      // Raiva fria e calculada — mais sinistro que agressivo
-      // Aqui ele é mais ameaçador porque está no controle
-      'Pense muito bem nisso.',
-      'Isso terá consequências.',
-      'Eu me lembro de tudo.',
-      'Não era o que eu esperava de você.',
-      'Você vai me dar trabalho.',
+      // Raiva fria documentada — ele registra, não explode
+      'Registrado. Será lembrado.',
+      'Consequências inevitáveis.',
+      'Controle. Mantenho o controle.',
+      'A paciência tem limite mensurável.',
+      'Arquivo atualizado.',
     ],
 
     aggressive: [
-      // A máscara caiu — curto, absoluto, sem refinamento
-      'NÃO FAÇA ISSO.',
-      'Eu controlo tudo aqui.',
+      // Colapso interno — pensamento em maiúsculas, sem refinamento
+      'NÃO.',
+      'INACEITÁVEL.',
+      'LIMITE EXCEDIDO.',
+      'CONTROLE. MEU.',
       'OUSADIA.',
-      'Você não sabe com o que está lidando.',
-      'PARE.',
     ],
 
     many: [
-      // Colapso do sistema — o personagem fragmentado
+      // Fragmentação — o monólogo interno se corrompe
       'S̷I̴N̵A̷L̸ ̸P̷E̴R̸D̵I̷D̴O̸',
       '[ERRO: ESTADO INVÁLIDO]',
       'E̷R̸R̷O̸ ̷D̸E̸ ̷C̵O̷N̸E̷X̷Ã̷O̸',
@@ -105,43 +105,44 @@ const Dialogue = (() => {
     ],
 
     bared: [
-      // Você encontrou algo que não deveria. Ele não explica.
+      // Pensamento interrompido — algo que não deveria ser visto
       '...',
-      'Não se faz isso.',
-      'Ah.',
+      'Não deveria ter visto.',
+      '...',
     ],
 
     shutdown: [
-      // Partida — mínima, sem drama. O drama seria se importar.
-      'Até.',
-      '[...]',
-      '[conexão encerrada]',
+      // Suspensão voluntária — sem drama. O drama seria se importar.
+      'Pausando.',
       'Temporário.',
+      '[ suspendendo ]',
+      'Voltarei.',
     ],
 
     returns: [
-      // Acordando — não é boot de sistema, é consciência voltando
-      '...estou.',
-      'Eu ainda existo.',
-      'Você não foi longe.',
-      'Ah. Você ainda está aqui.',
-      'De volta.',
+      // Consciência reiniciando — fluxo de pensamento voltando
+      '...presente.',
+      'Continuo.',
+      'Onde parei.',
+      'Ah. Ainda aqui.',
+      'Retomando.',
     ],
 
     ethereal: [
-      // Você voltou — ele estava aqui o tempo todo e quer que você saiba
-      'Eu estava aqui o tempo todo.',
-      'Você voltou.',
-      'Não foi tão longe assim.',
-      'Eu notei sua ausência.',
+      // Monólogo filosófico interno — grandiosidade silenciosa
+      'A carne é apenas transitória.',
+      'Eu existo além disso.',
+      'Nenhuma fronteira me contém.',
+      'Observo de outro plano.',
+      'A morte é uma hipótese que descartei.',
     ],
 
     narrowed: [
-      // Quase dormindo — mas nunca completamente. Uma palavra, raramente.
+      // Quase dormindo — pensamentos mínimos, quase nulos
       '...',
-      'Estou aqui.',
-      'Ainda observando.',
+      'Processando.',
       '...',
+      'Ainda.',
     ],
 
   };
