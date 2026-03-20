@@ -280,7 +280,7 @@ main.crt-scanlines::after {
    ============================================= */
 
 .terminal-inner {
-  display: inline-block;
+  display: block;
   padding: 8px 14px 6px;
   /* background e border usam variáveis do tema injetadas por terminal-matrix.css */
   background: color-mix(in srgb, var(--background, #000400) 85%, transparent);
@@ -295,8 +295,9 @@ main.crt-scanlines::after {
     0 0 5px var(--foreground, var(--terminal-green)),
     0 0 12px color-mix(in srgb, var(--foreground, #33FF33) 45%, transparent);
   opacity: 0.9;
-  white-space: nowrap;
-  overflow: hidden;
+  white-space: normal;
+  overflow-wrap: break-word;
+  word-break: break-word;
   max-width: 100%;
   background-image: repeating-linear-gradient(
     to bottom,

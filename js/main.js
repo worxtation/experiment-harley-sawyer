@@ -21,6 +21,10 @@ document.addEventListener('DOMContentLoaded', () => {
   const eyeWindow      = document.getElementById('eye-window');
   const eyeBadge       = document.getElementById('eye-window-badge');
 
+  // Launch screen
+  const launchScreen   = document.getElementById('launch-screen');
+  const launchBtn      = document.getElementById('launch-btn');
+
   // Labels de estado para o badge da janela do olho
   const EYE_STATE_LABELS = {
     idle:      'IDLE',
@@ -82,18 +86,22 @@ document.addEventListener('DOMContentLoaded', () => {
   try { Effects.initGlitch(glitchCanvas); } catch(e) { console.error('[Effects.initGlitch]', e); }
   try { Effects.startLoop(); } catch(e) { console.error('[Effects.startLoop]', e); }
 
-  try { Eye.init(eyeSvg); } catch(e) { console.error('[Eye.init]', e); }
-
   Dialogue.init(terminalOut, terminalCursor);
 
-  // Inicializa áudio após primeiro clique (política de autoplay)
-  let audioInitialized = false;
-  document.addEventListener('click', () => {
-    if (!audioInitialized) {
-      Audio.init();
-      Voice.init();
-      audioInitialized = true;
-    }
+  // =============================================
+  // Botão de entrada — inicia tudo no click
+  // =============================================
+
+  launchBtn?.addEventListener('click', () => {
+    launchScreen?.classList.add('hidden');
+    setTimeout(() => launchScreen?.remove(), 750);
+    document.body.classList.add('program-active');
+
+    try { Eye.init(eyeSvg); } catch(e) { console.error('[Eye.init]', e); }
+    Audio.init();
+    Voice.init();
+
+    startProgram();
   });
 
   // =============================================
@@ -101,6 +109,8 @@ document.addEventListener('DOMContentLoaded', () => {
   // =============================================
 
   let dialogueTimer = null;
+
+  function startProgram() {
 
   // =============================================
   // Inicializa state machine com callback
@@ -241,5 +251,7 @@ document.addEventListener('DOMContentLoaded', () => {
   setTimeout(() => {
     crtScreen?.classList.remove('crt-boot');
   }, 2000);
+
+  } // end startProgram
 
 });
