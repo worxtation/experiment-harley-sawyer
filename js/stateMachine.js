@@ -24,6 +24,8 @@ const StateMachine = (() => {
 
   // Easter egg — sequência para BARED
   // Clicar 3x no olho + esperar 2s + mover mouse em círculo
+  let shutdownAutoTimer = null;
+
   let easterEggStep = 0;
   let easterEggTimer = null;
   let circleTracker = { points: [], active: false };
@@ -268,14 +270,14 @@ const StateMachine = (() => {
 
   function handleVisibility() {
     if (document.hidden) {
-      transitionTo('shutdown', true);
+      handleBlur();
     } else {
-      transitionTo('ethereal', true);
-      setTimeout(() => transitionTo('idle'), 2500);
+      handleFocus();
     }
   }
 
   function handleFocus() {
+    clearTimeout(shutdownAutoTimer);
     if (currentState === 'shutdown') {
       transitionTo('ethereal', true);
       setTimeout(() => transitionTo('idle'), 2500);
@@ -284,6 +286,14 @@ const StateMachine = (() => {
 
   function handleBlur() {
     transitionTo('shutdown', true);
+    clearTimeout(shutdownAutoTimer);
+    // Após 5s em shutdown, retorna ao modo autônomo sem esperar o usuário
+    shutdownAutoTimer = setTimeout(() => {
+      if (currentState === 'shutdown') {
+        transitionTo('ethereal', true);
+        setTimeout(() => transitionTo('idle'), 2500);
+      }
+    }, 5000);
   }
 
   // =============================================

@@ -21,10 +21,12 @@ const Eye = (() => {
   let pupilPos      = { x: 0.5, y: 0.5 };
   let mouseOnScreen = false;
 
-  // Gaze autônomo — usado quando o mouse não está na tela
+  // Gaze autônomo — usado quando o mouse não está na tela ou está parado >10s
   let gazeTarget    = { x: 0.5, y: 0.5 };
   let gazeTimer     = null;
   let gazeResetTimer = null;
+  let mouseIdleAutonomousTimer = null;
+  const MOUSE_AUTONOMOUS_THRESHOLD = 10000; // 10s parado → modo autônomo
 
   /*
    * NLP_GAZE — direções de olhar baseadas no modelo clássico de PNL
@@ -206,7 +208,24 @@ const Eye = (() => {
   }
 
   function onMouseMove(e) {
+    const wasAutonomous = !mouseOnScreen;
     mouseOnScreen = true;
+
+    // Saindo do modo autônomo — cancela glances agendados
+    if (wasAutonomous) {
+      clearTimeout(gazeTimer);
+      clearTimeout(gazeResetTimer);
+    }
+
+    // Reinicia o timer de 10s para modo autônomo
+    clearTimeout(mouseIdleAutonomousTimer);
+    mouseIdleAutonomousTimer = setTimeout(() => {
+      mouseOnScreen = false;
+      gazeTarget.x = GAZE_CENTER.x;
+      gazeTarget.y = GAZE_CENTER.y;
+      scheduleGlance();
+    }, MOUSE_AUTONOMOUS_THRESHOLD);
+
     const rect = svg.getBoundingClientRect();
     mouseTarget.x = Math.max(0, Math.min(1, (e.clientX - rect.left) / rect.width));
     mouseTarget.y = Math.max(0, Math.min(1, (e.clientY - rect.top)  / rect.height));
@@ -219,6 +238,13 @@ const Eye = (() => {
     mouseOnScreen = true;
     clearTimeout(gazeTimer);
     clearTimeout(gazeResetTimer);
+    clearTimeout(mouseIdleAutonomousTimer);
+    mouseIdleAutonomousTimer = setTimeout(() => {
+      mouseOnScreen = false;
+      gazeTarget.x = GAZE_CENTER.x;
+      gazeTarget.y = GAZE_CENTER.y;
+      scheduleGlance();
+    }, MOUSE_AUTONOMOUS_THRESHOLD);
   }
 
   function onMouseLeave() {

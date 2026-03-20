@@ -151,6 +151,52 @@
   width: max-content;
 }
 
+/* ─── Cursor — oculto após 10s de inatividade ──────────────────────────── */
+
+#cursor.cursor-hidden {
+  opacity: 0;
+  transition: opacity 0.6s ease;
+}
+
+#cursor {
+  transition: opacity 0.2s ease;
+}
+
+/* ─── Restore link — isca abaixo do olho ────────────────────────────────── */
+
+#restore-link {
+  position: absolute;
+  top: calc(50% + clamp(140px, 20vw, 210px));
+  left: 50%;
+  transform: translateX(-50%);
+  z-index: 35;
+  font-family: var(--font-mono);
+  font-size: clamp(0.65rem, 1vw, 0.82rem);
+  letter-spacing: 0.12em;
+  color: rgba(51, 255, 51, 0.28);
+  text-decoration: none;
+  white-space: nowrap;
+  opacity: 0;
+  pointer-events: none;
+  transition: color 0.3s, opacity 0.5s ease 0.5s;
+  animation: restore-blink 3.5s ease-in-out infinite;
+}
+
+body.program-active #restore-link {
+  opacity: 1;
+  pointer-events: auto;
+}
+
+#restore-link:hover {
+  color: rgba(51, 255, 51, 0.65);
+  animation: none;
+}
+
+@keyframes restore-blink {
+  0%, 80%, 100% { opacity: 1; }
+  90%            { opacity: 0.35; }
+}
+
 /* ─── Launch screen — oculta janelas até interação do usuário ───────────── */
 
 #eye-window,

@@ -57,15 +57,31 @@ document.addEventListener('DOMContentLoaded', () => {
     let cursorX = -100, cursorY = -100;
     let targetX = -100, targetY = -100;
     let cursorFrame;
+    let cursorHideTimer = null;
 
     document.addEventListener('mousemove', (e) => {
       targetX = e.clientX;
       targetY = e.clientY;
+
+      // Mostra cursor se estava oculto
+      cursorEl.classList.remove('cursor-hidden');
+
+      // Oculta após 10s sem movimento
+      clearTimeout(cursorHideTimer);
+      cursorHideTimer = setTimeout(() => {
+        cursorEl.classList.add('cursor-hidden');
+      }, 10000);
     });
 
     document.addEventListener('mouseleave', () => {
       targetX = -200;
       targetY = -200;
+      clearTimeout(cursorHideTimer);
+      cursorEl.classList.add('cursor-hidden');
+    });
+
+    document.addEventListener('mouseenter', () => {
+      cursorEl.classList.remove('cursor-hidden');
     });
 
     // Suavização leve do cursor para ter um "lag" orgânico
@@ -111,6 +127,21 @@ document.addEventListener('DOMContentLoaded', () => {
   let dialogueTimer = null;
 
   function startProgram() {
+
+  // ── Restore link — clique provoca raiva máxima ───────────────────────────
+  const restoreLink = document.getElementById('restore-link');
+  restoreLink?.addEventListener('click', (e) => {
+    e.preventDefault();
+    StateMachine.forceState('aggressive');
+    Audio.playRage();
+    Effects.triggerGlitch(2500, 1.8);
+    setTimeout(() => {
+      if (StateMachine.getState() === 'aggressive') {
+        StateMachine.transitionTo('crimson', true);
+        setTimeout(() => StateMachine.transitionTo('idle'), 3500);
+      }
+    }, 2600);
+  });
 
   // =============================================
   // Inicializa state machine com callback

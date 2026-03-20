@@ -258,6 +258,76 @@ const Audio = (() => {
   }
 
   // =============================================
+  // Explosão de raiva — RESTORE LINK
+  // Ruído máximo em camadas: branco, sub-grave e chirps caóticos
+  // =============================================
+
+  function playRage() {
+    if (!isReady()) return;
+
+    // Nó de ganho extra para a raiva — 2× o volume normal sem tocar no master
+    const rageGain = ctx.createGain();
+    rageGain.gain.setValueAtTime(2.2, ctx.currentTime);
+    rageGain.gain.setValueAtTime(2.2, ctx.currentTime + 1.8);
+    rageGain.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + 2.8);
+    rageGain.connect(masterGain);
+    setTimeout(() => { try { rageGain.disconnect(); } catch(e) {} }, 3000);
+
+    // Camada 1 — ruído branco hard-clipped, 2.5s
+    const bufSize = ctx.sampleRate * 2.5;
+    const buf = ctx.createBuffer(1, bufSize, ctx.sampleRate);
+    const data = buf.getChannelData(0);
+    for (let i = 0; i < bufSize; i++) data[i] = Math.random() * 2 - 1;
+
+    const src = ctx.createBufferSource();
+    src.buffer = buf;
+
+    const clipper = ctx.createWaveShaper();
+    const clipCurve = new Float32Array(256);
+    for (let i = 0; i < 256; i++) {
+      clipCurve[i] = (i * 2) / 256 - 1 < 0 ? -1 : 1;
+    }
+    clipper.curve = clipCurve;
+
+    const noiseGain = ctx.createGain();
+    noiseGain.gain.value = 0.9;
+    src.connect(clipper);
+    clipper.connect(noiseGain);
+    noiseGain.connect(rageGain);
+    src.start();
+
+    // Camada 2 — sub-grave descendente, 2.5s
+    const rumble = ctx.createOscillator();
+    const rumbleGain = ctx.createGain();
+    rumble.type = 'sawtooth';
+    rumble.frequency.setValueAtTime(55, ctx.currentTime);
+    rumble.frequency.linearRampToValueAtTime(18, ctx.currentTime + 2.5);
+    rumbleGain.gain.setValueAtTime(0.9, ctx.currentTime);
+    rumbleGain.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + 2.5);
+    rumble.connect(rumbleGain);
+    rumbleGain.connect(rageGain);
+    rumble.start(ctx.currentTime);
+    rumble.stop(ctx.currentTime + 2.6);
+
+    // Camada 3 — 8 chirps caóticos em sequência rápida
+    for (let i = 0; i < 8; i++) {
+      const osc = ctx.createOscillator();
+      const g   = ctx.createGain();
+      const t   = ctx.currentTime + i * 0.10;
+      const freq = 250 + Math.random() * 3500;
+      osc.type = 'square';
+      osc.frequency.setValueAtTime(freq, t);
+      osc.frequency.exponentialRampToValueAtTime(freq * 0.08, t + 0.22);
+      g.gain.setValueAtTime(0.7, t);
+      g.gain.exponentialRampToValueAtTime(0.001, t + 0.28);
+      osc.connect(g);
+      g.connect(rageGain);
+      osc.start(t);
+      osc.stop(t + 0.32);
+    }
+  }
+
+  // =============================================
   // Volume global
   // =============================================
 
@@ -285,6 +355,7 @@ const Audio = (() => {
     onStateChange,
     playClick,
     playAggressive,
+    playRage,
     playGlitch,
     playShutdown,
     playBared,
