@@ -166,7 +166,7 @@
 
 #restore-link {
   position: absolute;
-  top: calc(60% + clamp(140px, 20vw, 210px));
+  top: calc(50% + clamp(140px, 20vw, 210px));
   left: 50%;
   transform: translateX(-50%);
   z-index: 35;
@@ -195,55 +195,6 @@ body.program-active #restore-link {
 @keyframes restore-blink {
   0%, 80%, 100% { opacity: 1; }
   90%            { opacity: 0.35; }
-}
-
-/* ─── Titlebar overlay — acima dos artefatos CRT ────────────────────────── */
-
-/* Titlebar original: oculta visualmente mas mantém o espaço no layout
-   (o SVG precisa ser empurrado para baixo pela height da titlebar) */
-#eye-window .crt-window-titlebar {
-  visibility: hidden;
-}
-
-/* Overlay posicionado identicamente ao #eye-window, z-index 22
-   (acima dos overlays da tela em z-index 20/21, abaixo das scanlines em 50) */
-#eye-titlebar-overlay {
-  position: absolute;
-  top: 40%;
-  left: 50%;
-  transform: translate(-50%, -50%);
-  z-index: 22;
-  width: min(92vw, 148vh, 800px);
-  pointer-events: none;
-  opacity: 0;
-  transition: opacity 0.9s ease 0.2s;
-}
-
-body.program-active #eye-titlebar-overlay {
-  opacity: 1;
-}
-
-/* Herda os estilos visuais de .crt-window para o overlay */
-#eye-titlebar-overlay .crt-window-titlebar {
-  border: 1px solid rgba(var(--win-r), var(--win-g), var(--win-b), 0.18);
-  border-bottom: 1px solid rgba(var(--win-r), var(--win-g), var(--win-b), 0.14);
-  background: rgba(var(--win-r), var(--win-g), var(--win-b), 0.04);
-  transition:
-    background   0.28s ease,
-    color        0.28s ease,
-    border-color 0.28s ease;
-}
-
-#eye-titlebar-overlay.window-active .crt-window-titlebar {
-  background: rgba(var(--win-r), var(--win-g), var(--win-b), 0.08);
-  color: rgba(var(--win-r), var(--win-g), var(--win-b), 0.88);
-  text-shadow: 0 0 10px rgba(var(--win-r), var(--win-g), var(--win-b), 0.50);
-  border-color: rgba(var(--win-r), var(--win-g), var(--win-b), 0.35);
-}
-
-#eye-titlebar-overlay.window-active .crt-win-dot {
-  border-color: rgba(var(--win-r), var(--win-g), var(--win-b), 0.65);
-  box-shadow: 0 0 4px rgba(var(--win-r), var(--win-g), var(--win-b), 0.40);
 }
 
 /* ─── Launch screen — oculta janelas até interação do usuário ───────────── */

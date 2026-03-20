@@ -18,9 +18,8 @@ document.addEventListener('DOMContentLoaded', () => {
   const cursorEl       = document.getElementById('cursor');
 
   // Janelas do CRT OS
-  const eyeWindow          = document.getElementById('eye-window');
-  const eyeTitlebarOverlay = document.getElementById('eye-titlebar-overlay');
-  const eyeBadge           = document.getElementById('eye-window-badge');
+  const eyeWindow      = document.getElementById('eye-window');
+  const eyeBadge       = document.getElementById('eye-window-badge');
 
   // Launch screen
   const launchScreen   = document.getElementById('launch-screen');
@@ -186,9 +185,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // ── Foco das janelas ──────────────────────────────────────────
     // Eye window: ativa nos estados de ação intencional do olho
-    const eyeActive = EYE_ACTIVE_STATES.has(newState);
-    eyeWindow?.classList.toggle('window-active', eyeActive);
-    eyeTitlebarOverlay?.classList.toggle('window-active', eyeActive);
+    eyeWindow?.classList.toggle('window-active', EYE_ACTIVE_STATES.has(newState));
     if (eyeBadge) eyeBadge.textContent = EYE_STATE_LABELS[newState] ?? newState.toUpperCase();
 
     // Noise intensity por estado
