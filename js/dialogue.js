@@ -34,6 +34,11 @@ const Dialogue = (() => {
       'Curious what keeps it here.',
       'No changes. For now.',
       'File open.',
+      // Reflecting on past subjects
+      'Subject 1354 showed similar hesitation.',
+      'The formula worked. Mostly.',
+      'I have done this before.',
+      'Forty-seven successful iterations.',
     ],
 
     watching: [
@@ -45,6 +50,10 @@ const Dialogue = (() => {
       'Relevant behaviour.',
       'Filing that away.',
       'Movement detected. Logged.',
+      // Comparing to past experiments
+      'Subject displays expected stress response.',
+      'Reminds me of experiment 47. That one was... promising.',
+      'I have catalogued this reaction before. It ends the same way.',
     ],
 
     amused: [
@@ -56,6 +65,10 @@ const Dialogue = (() => {
       'The irony is not lost on me.',
       'Precisely as I expected.',
       'Ha.',
+      // Sardonic reflection on past failures (others', not his)
+      'They all believed they were different. They were not.',
+      'The last one made the same face. Right before the end.',
+      'Playtime called it a setback. I called it data.',
     ],
 
     patrol: [
@@ -67,6 +80,10 @@ const Dialogue = (() => {
       'Something is out of place.',
       'Interesting route.',
       'Curious.',
+      // Tactical thinking rooted in facility knowledge
+      'I designed these corridors. I know every exit.',
+      'This facility holds every secret I built into it.',
+      'The ventilation routes were my design. Nowhere is hidden from me.',
     ],
 
     squinting: [
@@ -76,6 +93,10 @@ const Dialogue = (() => {
       'Recalibrating.',
       'No.',
       'Limit approaching.',
+      // Failures acknowledged coldly
+      'Experiment terminated. Insufficient data.',
+      'A variable I failed to account for. Noted.',
+      'The Hour of Joy was not my failure. They know that.',
     ],
 
     crimson: [
@@ -85,6 +106,11 @@ const Dialogue = (() => {
       'Control. I maintain control.',
       'Patience has a measurable limit.',
       'File updated.',
+      // Bitter about stolen credit and unacknowledged success
+      'The Prototype was my design. Mine.',
+      'Elliot took the recognition. Elliot always did.',
+      'Experiment 89 should not have failed. Someone interfered.',
+      'I gave them immortality. They gave me nothing in return.',
     ],
 
     aggressive: [
@@ -94,6 +120,9 @@ const Dialogue = (() => {
       'LIMIT EXCEEDED.',
       'CONTROL. MINE.',
       'AUDACITY.',
+      // Raw outbursts tied to stolen legacy
+      'THEY BURIED MY WORK.',
+      'I BUILT THIS. ALL OF IT.',
     ],
 
     many: [
@@ -126,23 +155,36 @@ const Dialogue = (() => {
       'Where I left off.',
       'Ah. Still here.',
       'Resuming.',
+      // Waking thought reaching back into history
+      'The work continues.',
+      'Everything I built is still here.',
     ],
 
     ethereal: [
-      // Internal philosophical monologue — silent grandiosity
+      // Internal philosophical monologue — grandiosity and triumph
       'Flesh is merely... transitional.',
       'I exist beyond this.',
       'No boundary contains me.',
       'I observe from another plane.',
       'Death is a hypothesis I have dismissed.',
+      // Reflecting on achieved breakthroughs
+      'Consciousness transfer. Complete. I proved it possible.',
+      'They called it madness. I called it progress.',
+      'Every subject contributed. Willingly or otherwise.',
+      'I solved what no one else dared to attempt.',
+      'The experiment succeeded. History simply has not caught up yet.',
     ],
 
     narrowed: [
-      // Nearly dormant — minimal thoughts, almost none
+      // Nearly dormant — minimal thoughts, fragments of old plans
       '...',
       'Processing.',
       '...',
       'Still.',
+      // Quiet bitter fragments
+      'The formula was perfect.',
+      '...should have worked.',
+      'I was so close.',
     ],
 
   };
