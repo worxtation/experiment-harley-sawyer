@@ -166,7 +166,7 @@
 
 #restore-link {
   position: absolute;
-  top: calc(50% + clamp(140px, 20vw, 210px));
+  top: calc(60% + clamp(140px, 20vw, 210px));
   left: 50%;
   transform: translateX(-50%);
   z-index: 35;
@@ -179,12 +179,12 @@
   opacity: 0;
   pointer-events: none;
   transition: color 0.3s, opacity 0.5s ease 0.5s;
-  animation: restore-blink 3.5s ease-in-out infinite;
 }
 
 body.program-active #restore-link {
   opacity: 1;
   pointer-events: auto;
+  animation: restore-blink 3.5s ease-in-out infinite;
 }
 
 #restore-link:hover {

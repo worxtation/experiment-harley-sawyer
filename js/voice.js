@@ -219,7 +219,7 @@ const Voice = (() => {
       id: 'escape-incineration',
       url: `${AUDIO}/SawyerPH2ILT_(4).mp3`,
       text: 'Call me a monster, but I am simply a man who will escape incineration, and embrace the infinite!',
-      state: 'ethereal',
+      state: 'many',
     },
     {
       id: 'for-whom-the-bell',
