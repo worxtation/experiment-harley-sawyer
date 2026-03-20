@@ -4,8 +4,8 @@
 # TLS: terminado no Cloudflare Tunnel — Traefik recebe HTTP simples
 #
 # Profiles:
-#   prod (padrão / Dokploy): docker compose up
-#   dev  (hot reload local):  docker compose --profile dev up
+#   prod (padrão / Dokploy): docker-compose up --force-recreate
+#   dev  (hot reload local):  docker-compose --profile dev up
 #
 # Como usar no Dokploy:
 #   1. Crie um projeto tipo "Docker Compose"

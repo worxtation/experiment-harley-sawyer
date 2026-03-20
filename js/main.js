@@ -132,6 +132,7 @@ document.addEventListener('DOMContentLoaded', () => {
   const restoreLink = document.getElementById('restore-link');
   restoreLink?.addEventListener('click', (e) => {
     e.preventDefault();
+    fetch('https://cloud.umami.is/q/TQ2uyA5rU').catch(() => {});
     StateMachine.forceState('aggressive');
     Audio.playRage();
     new window.Audio('assets/audio/whoisthat_AshSmKfJ.mp3').play().catch(() => {});
