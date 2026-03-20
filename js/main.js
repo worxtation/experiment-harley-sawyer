@@ -134,6 +134,7 @@ document.addEventListener('DOMContentLoaded', () => {
     e.preventDefault();
     StateMachine.forceState('aggressive');
     Audio.playRage();
+    new window.Audio('assets/audio/whoisthat_AshSmKfJ.mp3').play().catch(() => {});
     Effects.triggerGlitch(2500, 1.8);
     setTimeout(() => {
       if (StateMachine.getState() === 'aggressive') {
