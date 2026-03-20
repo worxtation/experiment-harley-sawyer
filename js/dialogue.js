@@ -24,125 +24,125 @@ const Dialogue = (() => {
   const PHRASES = {
 
     idle: [
-      // Notas mentais passivas — observação clínica em repouso
+      // Passive mental notes — clinical observation at rest
       '...',
-      'Nota: ainda presente.',
-      'Padrão consistente.',
-      'Noto.',
-      'Catalogando.',
+      'Note: still present.',
+      'Consistent pattern.',
+      'I notice.',
+      'Cataloguing.',
       '[ ... ]',
-      'Curioso o que o mantém aqui.',
-      'Sem alterações. Por ora.',
-      'Arquivo em aberto.',
+      'Curious what keeps it here.',
+      'No changes. For now.',
+      'File open.',
     ],
 
     watching: [
-      // Foco máximo — anotação clínica interna, não interpelação
-      'Ali. Encontrado.',
-      'Confirmo minha hipótese.',
-      'Analisando.',
-      'Fascinante. Muito fascinante.',
-      'Comportamento relevante.',
-      'Guardo isso.',
-      'Movimento detectado. Registrado.',
+      // Peak focus — internal clinical annotation, not address
+      'There. Found.',
+      'Hypothesis confirmed.',
+      'Analysing.',
+      'Fascinating. Quite fascinating.',
+      'Relevant behaviour.',
+      'Filing that away.',
+      'Movement detected. Logged.',
     ],
 
     amused: [
-      // Comentário interno sardônico — ele ri para si, não para você
-      'Previsível até o fim.',
-      'Delicioso.',
-      'Ingênuo. Completamente ingênuo.',
-      'Ah. Claro.',
-      'A ironia não me escapa.',
-      'Exatamente como eu esperava.',
+      // Sardonic internal commentary — laughing to himself, not at you
+      'Predictable to the last.',
+      'Delightful.',
+      'Naive. Completely naive.',
+      'Ah. Of course.',
+      'The irony is not lost on me.',
+      'Precisely as I expected.',
       'Ha.',
     ],
 
     patrol: [
-      // Caçador calculando — pensamentos de busca, não ameaças ditas
-      'Por onde foi.',
-      'Rastreando.',
-      'Não muito longe, imagino.',
-      'Encontrarei. Sempre encontro.',
-      'Há algo fora do lugar.',
-      'Interessante rota.',
-      'Curioso.',
+      // Hunter calculating — search thoughts, not spoken threats
+      'Where did it go.',
+      'Tracking.',
+      'Not far, I imagine.',
+      'I will find it. I always do.',
+      'Something is out of place.',
+      'Interesting route.',
+      'Curious.',
     ],
 
     squinting: [
-      // Irritação contida — nota interna de aviso a si mesmo
-      'Irritante.',
-      'Isso foi um erro.',
-      'Recalibrando.',
-      'Não.',
-      'Limite próximo.',
+      // Contained irritation — internal warning note to self
+      'Irritating.',
+      'That was a mistake.',
+      'Recalibrating.',
+      'No.',
+      'Limit approaching.',
     ],
 
     crimson: [
-      // Raiva fria documentada — ele registra, não explode
-      'Registrado. Será lembrado.',
-      'Consequências inevitáveis.',
-      'Controle. Mantenho o controle.',
-      'A paciência tem limite mensurável.',
-      'Arquivo atualizado.',
+      // Cold documented rage — he logs it, does not erupt
+      'Logged. It will be remembered.',
+      'Consequences are inevitable.',
+      'Control. I maintain control.',
+      'Patience has a measurable limit.',
+      'File updated.',
     ],
 
     aggressive: [
-      // Colapso interno — pensamento em maiúsculas, sem refinamento
-      'NÃO.',
-      'INACEITÁVEL.',
-      'LIMITE EXCEDIDO.',
-      'CONTROLE. MEU.',
-      'OUSADIA.',
+      // Internal collapse — thought in capitals, no refinement
+      'NO.',
+      'UNACCEPTABLE.',
+      'LIMIT EXCEEDED.',
+      'CONTROL. MINE.',
+      'AUDACITY.',
     ],
 
     many: [
-      // Fragmentação — o monólogo interno se corrompe
-      'S̷I̴N̵A̷L̸ ̸P̷E̴R̸D̵I̷D̴O̸',
-      '[ERRO: ESTADO INVÁLIDO]',
-      'E̷R̸R̷O̸ ̷D̸E̸ ̷C̵O̷N̸E̷X̷Ã̷O̸',
+      // Fragmentation — internal monologue corrupts
+      'S̷I̴G̵N̷A̸L̸ ̸L̷O̴S̸T̵',
+      '[ERROR: INVALID STATE]',
+      'C̷O̸N̸N̷E̷C̴T̸I̵O̷N̸ ̷E̸R̸R̷O̸R̸',
       '//KERNEL_FAULT//',
     ],
 
     bared: [
-      // Pensamento interrompido — algo que não deveria ser visto
+      // Interrupted thought — something that should not have been seen
       '...',
-      'Não deveria ter visto.',
+      'Should not have seen that.',
       '...',
     ],
 
     shutdown: [
-      // Suspensão voluntária — sem drama. O drama seria se importar.
-      'Pausando.',
-      'Temporário.',
-      '[ suspendendo ]',
-      'Voltarei.',
+      // Voluntary suspension — no drama. Drama would imply caring.
+      'Suspending.',
+      'Temporary.',
+      '[ standby ]',
+      'I will return.',
     ],
 
     returns: [
-      // Consciência reiniciando — fluxo de pensamento voltando
-      '...presente.',
-      'Continuo.',
-      'Onde parei.',
-      'Ah. Ainda aqui.',
-      'Retomando.',
+      // Consciousness rebooting — stream of thought resuming
+      '...present.',
+      'Continuing.',
+      'Where I left off.',
+      'Ah. Still here.',
+      'Resuming.',
     ],
 
     ethereal: [
-      // Monólogo filosófico interno — grandiosidade silenciosa
-      'A carne é apenas transitória.',
-      'Eu existo além disso.',
-      'Nenhuma fronteira me contém.',
-      'Observo de outro plano.',
-      'A morte é uma hipótese que descartei.',
+      // Internal philosophical monologue — silent grandiosity
+      'Flesh is merely... transitional.',
+      'I exist beyond this.',
+      'No boundary contains me.',
+      'I observe from another plane.',
+      'Death is a hypothesis I have dismissed.',
     ],
 
     narrowed: [
-      // Quase dormindo — pensamentos mínimos, quase nulos
+      // Nearly dormant — minimal thoughts, almost none
       '...',
-      'Processando.',
+      'Processing.',
       '...',
-      'Ainda.',
+      'Still.',
     ],
 
   };
