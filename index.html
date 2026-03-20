@@ -70,7 +70,7 @@
             <span class="crt-win-dot"></span>
           </div>
           <span class="crt-window-title">THE DOCTOR</span>
-          <span class="crt-window-badge" id="eye-window-badge">IDLE</span>
+          <span class="crt-window-badge">IDLE</span>
         </div>
 
         <!-- Corpo da janela: centering do SVG -->
@@ -407,14 +407,27 @@
       </div>
       <!-- /eye-window -->
 
-      <!-- Restore link — isca -->
-      <a id="restore-link" href="#">waiting for backup restore...</a>
+      <!-- Titlebar overlay — acima dos artefatos, z-index 22 -->
+      <div id="eye-titlebar-overlay">
+        <div class="crt-window-titlebar">
+          <div class="crt-win-controls">
+            <span class="crt-win-dot"></span>
+            <span class="crt-win-dot"></span>
+            <span class="crt-win-dot"></span>
+          </div>
+          <span class="crt-window-title">THE DOCTOR</span>
+          <span class="crt-window-badge" id="eye-window-badge">IDLE</span>
+        </div>
+      </div>
 
     </div>
     <!-- /crt-screen -->
 
   </main>
   <!-- /crt-scanlines -->
+
+      <!-- Restore link — isca -->
+      <a id="restore-link" href="#">waiting for backup restore...</a>
 
   <!-- Janela de terminal — fora do crt-screen para não sofrer filtros de tela -->
   <div class="terminal-output crt-window" id="terminal-window">
